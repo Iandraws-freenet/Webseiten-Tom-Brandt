@@ -111,44 +111,50 @@ body {
 
 /* CSS 1 – Seite */
 body {
-
+background: linear-gradient(180deg,  #000000, #2b2b2b)
 }
 
 /* CSS 2 – Überschrift, Untertitel, Zähler */
 h1 {
-
+text-transform: uppercase;
+color: silver;
 }
 
 .untertitel {
-
+text-transform: uppercase;
+color: silver;
 }
 
 .zaehler {
-
+text-transform: uppercase;
+color: silver;
 }
 
 /* CSS 3 – Suchfeld */
 .suche {
-
+border-radius: 30px
 }
 
 /* CSS 4 – Sortier-Buttons */
 .sortier-button {
+background-color: aliceblue;    
 
 }
 
 .sortier-button.aktiv {
-
+background-color: silver;
+color: black;
 }
 
 /* CSS 5 – Karte */
 .karte {
-
+ border: 2px solid gray;
+border-radius: 5px;
 }
 
 /* CSS 6 – Logo und Text in der Karte */
 .karte img {
-
+width: 60%;
 }
 
 .karte h2 {
