@@ -8,28 +8,29 @@ body {
 }
 
 .container {
-    /* TODO: Breite 400px */ padding: 400px;
+    /* TODO: Breite 400px */ width:  400px;
     /* TODO: Auf der Seite zentrieren (margin: 0 auto;) */margin: 0 auto;
 }
 
 .box {
-    /* TODO: Breite 300px */ 
-    /* TODO: Innenabstand 20px */ 
-    /* TODO: Rahmen 2px solid + Farbe */
-    /* TODO: Außenabstand 20px */
-    /* TODO: Abgerundete Ecken 10px */
+    /* TODO: Breite 300px */ width: 300px;
+    /* TODO: Innenabstand 20px */ padding: 20px;
+    /* TODO: Rahmen 2px solid + Farbe */ border: 2px solid #ccc;
+    /* TODO: Außenabstand 20px */ margin: 20px;
+    /* TODO: Abgerundete Ecken 10px */ border-radius: 10px;
 }
 
 .box-rot {
-    /* TODO: Hintergrundfarbe (z. B. #ffcccc) */
+    /* TODO: Hintergrundfarbe (z. B. #ffcccc) */ background-color: rgb(255, 73, 73);
 }
 
 .box-gruen {
-    /* TODO: Hintergrundfarbe (z. B. #ccffcc) */
+    /* TODO: Hintergrundfarbe (z. B. #ccffcc) */ background-color: rgb(0, 180, 0);
 }
 
 .box-blau {
-    /* TODO: Hintergrundfarbe (z. B. #cce0ff) */
+    /* TODO: Hintergrundfarbe (z. B. #cce0ff) */ background-color: rgb(100, 100, 255);
 }
 
-/* BONUS: Was passiert mit box-sizing: border-box? Antwort hier als Kommentar: */
+/* BONUS: Was passiert mit box-sizing: border-box? Antwort hier als Kommentar: */ 
+/* Ich glaub das ändert die box größe und boarder die umrandung
