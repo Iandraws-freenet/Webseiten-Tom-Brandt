@@ -8,13 +8,13 @@ body {
 }
 
 .container {
-    /* TODO: Breite 400px */
-    /* TODO: Auf der Seite zentrieren (margin: 0 auto;) */
+    /* TODO: Breite 400px */ padding: 400px;
+    /* TODO: Auf der Seite zentrieren (margin: 0 auto;) */margin: 0 auto;
 }
 
 .box {
-    /* TODO: Breite 300px */
-    /* TODO: Innenabstand 20px */
+    /* TODO: Breite 300px */ 
+    /* TODO: Innenabstand 20px */ 
     /* TODO: Rahmen 2px solid + Farbe */
     /* TODO: Außenabstand 20px */
     /* TODO: Abgerundete Ecken 10px */
