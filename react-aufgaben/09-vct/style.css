@@ -1,0 +1,508 @@
+/* =====================================================
+   TEIL A – FERTIG: Layout (bitte nicht verändern)
+   ===================================================== */
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    background-attachment: fixed;
+}
+
+.seite {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 30px 16px;
+    text-align: center;
+}
+
+.laden {
+    margin: 60px 16px;
+    text-align: center;
+    font-size: 18px;
+}
+
+/* ---------- Turnier-Infos ---------- */
+.event-box {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 10px 24px;
+    margin: 20px 0;
+}
+
+.event-box p {
+    margin: 0;
+}
+
+.event-logo {
+    width: 70px;
+    height: 70px;
+    object-fit: contain;
+}
+
+/* ---------- Weltmeister ---------- */
+.weltmeister {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin: 20px 0 30px;
+    animation: huepfen 0.8s ease-out;
+}
+
+.weltmeister img {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+}
+
+.weltmeister h2 {
+    margin: 0;
+}
+
+@keyframes huepfen {
+    0%   { transform: scale(0.5); }
+    60%  { transform: scale(1.08); }
+    100% { transform: scale(1); }
+}
+
+/* ---------- Team-Karten im Raster ---------- */
+.karten {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 18px;
+}
+
+.karte {
+    cursor: pointer;
+    min-height: 60px;
+    padding: 16px 10px;
+    transition: transform 0.2s;
+}
+
+.karte:hover {
+    transform: translateY(-6px) scale(1.03);
+}
+
+.karte img {
+    width: 90px;
+    height: 90px;
+    object-fit: contain;
+}
+
+.karte h3 {
+    margin: 10px 0 4px;
+}
+
+.karte p {
+    margin: 2px 0;
+}
+
+footer {
+    margin-top: 40px;
+}
+
+/* ---------- ⭐ Erweiterung: Team-Box über der Seite ---------- */
+.overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    background-color: rgba(0, 0, 0, 0.8);
+    animation: einblenden 0.2s ease-out;
+}
+
+.details {
+    position: relative;
+    width: 100%;
+    max-width: 560px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-sizing: border-box;
+    text-align: center;
+    line-height: 1.5;
+    animation: reinfliegen 0.3s ease-out;
+}
+
+@keyframes einblenden {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+@keyframes reinfliegen {
+    from { opacity: 0; transform: translateY(30px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.schliessen {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 1;
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 50%;
+    background-color: #eeeeee;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+.team-logo {
+    width: 110px;
+    height: 110px;
+    object-fit: contain;
+}
+
+.details h2,
+.kuerzel {
+    margin: 4px 0;
+}
+
+/* Spieler: 5 nebeneinander */
+.spieler-liste {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+    margin: 18px 0;
+}
+
+.spieler-karte {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 8px 4px;
+}
+
+.spieler-karte img,
+.kein-foto {
+    width: 70px;
+    height: 70px;
+    object-fit: cover;
+}
+
+.kein-foto {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 34px;
+}
+
+.spieler-karte h4 {
+    margin: 6px 0 2px;
+    font-size: 15px;
+}
+
+.spieler-karte p {
+    margin: 0;
+    font-size: 11px;
+    line-height: 1.3;
+}
+
+/* Matches vom Team */
+.team-matches {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.team-match {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+}
+
+.team-match .runde {
+    text-align: left;
+    font-size: 13px;
+}
+
+.team-match span:last-child {
+    text-align: right;
+    font-size: 14px;
+}
+
+.link-leiste {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 18px;
+}
+
+.link-button {
+    display: inline-block;
+    padding: 8px 14px;
+    text-decoration: none;
+    transition: transform 0.15s;
+}
+
+.link-button:hover {
+    transform: translateY(-2px);
+}
+
+/* ---------- ⭐⭐ Teil 4: Turnierbaum ---------- */
+.turnierbaum {
+    margin-top: 40px;
+}
+
+.turnierbaum h2 {
+    margin: 0 0 12px;
+}
+
+.lieblingsteam {
+    margin-bottom: 20px;
+}
+
+.lieblingsteam select {
+    min-height: 40px;
+    margin-left: 8px;
+    padding: 6px 10px;
+    font-size: 16px;
+}
+
+.bilanz {
+    margin: 10px 0 0;
+}
+
+.abschnitt {
+    margin-bottom: 24px;
+}
+
+.abschnitt h3 {
+    margin: 0 0 10px;
+    text-align: left;
+}
+
+/* Runden nebeneinander, auf dem Handy seitlich scrollen */
+.runden {
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+}
+
+.runde-spalte {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    gap: 12px;
+    min-width: 210px;
+    flex: 1;
+}
+
+.runde-spalte h4 {
+    margin: 0;
+    font-size: 14px;
+}
+
+.match {
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.match-team {
+    display: grid;
+    grid-template-columns: 26px 1fr auto;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px;
+    text-align: left;
+}
+
+.match-team img {
+    width: 26px;
+    height: 26px;
+    object-fit: contain;
+}
+
+.match-team span {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    font-size: 14px;
+}
+
+.match.favorit {
+    transform: scale(1.04);
+}
+
+/* ---------- Handy ---------- */
+@media (max-width: 600px) {
+    .karten {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+
+    .karte img {
+        width: 64px;
+        height: 64px;
+    }
+
+    .spieler-liste {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .weltmeister {
+        flex-direction: column;
+    }
+}
+
+
+/* =====================================================
+   TEIL B – ✏️ DEIN CSS
+   ===================================================== */
+
+/* CSS 1 – Seite: dunkler Hintergrund, helle Schrift, Schriftart */
+body {
+
+}
+
+/* CSS 2 – Überschrift und Untertitel */
+h1 {
+
+}
+
+.untertitel {
+
+}
+
+/* CSS 3 – Turnier-Infos */
+.event-box {
+
+}
+
+/* CSS 4 – Weltmeister-Box */
+.weltmeister {
+
+}
+
+/* CSS 5 – Team-Karte */
+.karte {
+
+}
+
+/* CSS 6 – Name und Preisgeld in der Karte */
+.karte h3 {
+
+}
+
+.preisgeld {
+
+}
+
+/* CSS 7 – Platz-Farben (border-color) */
+.gold {
+
+}
+
+.silber {
+
+}
+
+.bronze {
+
+}
+
+/* CSS 8 – Platz in der Karte */
+.platz {
+
+}
+
+/* CSS 9 – Fußzeile */
+footer {
+
+}
+
+
+/* =====================================================
+   TEIL C – ⭐ ERWEITERUNG: DEIN CSS
+   ===================================================== */
+
+/* CSS 10 – Team-Box und Kürzel */
+.details {
+
+}
+
+.kuerzel {
+
+}
+
+/* CSS 11 – Spieler-Karte und rundes Foto */
+.spieler-karte {
+
+}
+
+.spieler-karte img,
+.kein-foto {
+
+}
+
+/* CSS 12 – Matches: gewonnen und verloren */
+.team-match {
+
+}
+
+.team-match.gewonnen {
+
+}
+
+.team-match.verloren {
+
+}
+
+/* CSS 13 – Link-Button */
+.link-button {
+
+}
+
+.link-button:hover {
+
+}
+
+
+/* =====================================================
+   TEIL D – ⭐⭐ TEIL 4: DEIN CSS
+   ===================================================== */
+
+/* CSS 14 – Turnierbaum-Box und Auswahl vom Lieblingsteam */
+.turnierbaum {
+
+}
+
+.lieblingsteam select {
+
+}
+
+/* CSS 15 – Überschriften der Abschnitte und Runden */
+.abschnitt h3 {
+
+}
+
+.runde-spalte h4 {
+
+}
+
+/* CSS 16 – Ein Match-Kasten */
+.match {
+
+}
+
+/* CSS 17 – Der Gewinner eines Matches */
+.match-team.gewinner {
+
+}
+
+/* CSS 18 – Matches vom Lieblingsteam und Bilanz */
+.match.favorit {
+
+}
+
+.bilanz {
+
+}
