@@ -276,6 +276,95 @@ body {
     opacity: 0.5;
 }
 
+/* ---------- ⭐⭐ Teil 4: Knöpfe unter dem Deck ---------- */
+.deck-knoepfe {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 14px;
+}
+
+.zufall-button,
+.leeren-button {
+    min-height: 44px;
+    padding: 8px 18px;
+    cursor: pointer;
+    transition: transform 0.15s;
+}
+
+.zufall-button:hover:not(:disabled),
+.leeren-button:hover:not(:disabled) {
+    transform: translateY(-2px);
+}
+
+.zufall-button:disabled,
+.leeren-button:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+/* ---------- ⭐⭐ Teil 4: Deck-Analyse ---------- */
+.analyse {
+    margin: 0 0 20px;
+    animation: reinfliegen 0.3s ease-out;
+}
+
+.analyse h2,
+.analyse h3,
+.deck-typ {
+    margin: 0 0 6px;
+}
+
+.analyse-werte {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin: 15px 0;
+}
+
+.analyse-wert {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 8px;
+}
+
+/* Elixier-Kurve: Säulen nebeneinander */
+.kurve {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.kurve-spalte {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    width: 36px;
+}
+
+.saeule-platz {
+    display: flex;
+    align-items: flex-end;
+    width: 100%;
+    height: 100px;
+}
+
+.saeule {
+    width: 100%;
+    min-height: 4px;
+    transition: height 0.4s ease-out;
+}
+
+.kurve-anzahl,
+.kurve-elixier {
+    font-size: 13px;
+}
+
 footer {
     margin-top: 40px;
 }
@@ -284,6 +373,18 @@ footer {
 @media (max-width: 600px) {
     .deck {
         grid-template-columns: repeat(4, 1fr);
+    }
+
+    .analyse-werte {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .kurve {
+        gap: 6px;
+    }
+
+    .kurve-spalte {
+        width: 28px;
     }
 
     .karten {
@@ -528,5 +629,63 @@ footer {
 
 /* CSS 14 – Button "Ins Deck" */
 .deck-button {
+
+}
+
+
+/* =====================================================
+   TEIL D – ⭐⭐ TEIL 4: DEIN CSS
+   ===================================================== */
+
+/* CSS 15 – Knöpfe "Zufalls-Deck" und "Deck leeren" */
+.zufall-button {
+
+}
+
+.leeren-button {
+
+}
+
+/* CSS 16 – Analyse-Box, Überschrift und Deck-Typ */
+.analyse {
+
+}
+
+.analyse h2 {
+
+}
+
+.deck-typ {
+
+}
+
+/* CSS 17 – Rahmenfarbe je nach Deck-Typ */
+.analyse.schnell {
+
+}
+
+.analyse.mittel {
+
+}
+
+.analyse.schwer {
+
+}
+
+/* CSS 18 – Die vier Analyse-Kästchen */
+.analyse-wert {
+
+}
+
+.analyse-wert strong {
+
+}
+
+/* CSS 19 – Elixier-Kurve */
+.saeule {
+
+}
+
+.kurve-elixier {
 
 }

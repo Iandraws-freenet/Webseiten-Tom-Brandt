@@ -168,6 +168,97 @@ body {
     transform: translateY(-2px);
 }
 
+/* ---------- ⭐⭐ Teil 4: Tabelle ---------- */
+.tabelle-box {
+    margin: 10px 0 30px;
+    overflow-x: auto;
+}
+
+.tabelle-box h2,
+.saison {
+    margin: 0 0 8px;
+}
+
+.tabelle {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.tabelle th,
+.tabelle td {
+    padding: 8px 10px;
+    white-space: nowrap;
+}
+
+.tabelle tbody tr {
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.team-zelle img {
+    width: 26px;
+    height: 26px;
+    object-fit: contain;
+    vertical-align: middle;
+    margin-right: 6px;
+}
+
+/* ---------- ⭐⭐ Teil 4: Spieler ---------- */
+.kader {
+    margin-top: 25px;
+}
+
+.kader h3 {
+    margin: 0 0 10px;
+}
+
+.spieler-liste {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 14px;
+}
+
+.spieler-karte {
+    position: relative;
+    padding: 10px;
+    text-align: center;
+    transition: transform 0.2s;
+}
+
+.spieler-karte:hover {
+    transform: translateY(-4px);
+}
+
+.spieler-karte img {
+    width: 100%;
+    max-width: 110px;
+    aspect-ratio: 1;
+    object-fit: contain;
+}
+
+.spieler-karte h4 {
+    margin: 6px 0 2px;
+}
+
+.spieler-karte p {
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+.nummer {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    min-width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
 footer {
     margin-top: 40px;
 }
@@ -181,6 +272,16 @@ footer {
 
     .mehr-infos {
         grid-template-columns: 1fr;
+    }
+
+    .tabelle th,
+    .tabelle td {
+        padding: 6px;
+        font-size: 14px;
+    }
+
+    .spieler-liste {
+        grid-template-columns: repeat(2, 1fr);
     }
 }
 
@@ -307,5 +408,47 @@ footer {
 }
 
 .link-button:hover {
+
+}
+
+
+/* =====================================================
+   TEIL D – ⭐⭐ TEIL 4: DEIN CSS
+   ===================================================== */
+
+/* CSS 12 – Tabellen-Box und Saison */
+.tabelle-box {
+
+}
+
+.saison {
+
+}
+
+/* CSS 13 – Tabelle: Kopfzeile, Zellen und Zeile beim Drüberfahren */
+.tabelle th {
+
+}
+
+.tabelle td {
+
+}
+
+.tabelle tbody tr:hover {
+
+}
+
+/* CSS 14 – Markierte Zeile (das Team, das gerade offen ist) */
+.tabelle tr.markiert {
+
+}
+
+/* CSS 15 – Spieler-Karte */
+.spieler-karte {
+
+}
+
+/* CSS 16 – Rückennummer */
+.nummer {
 
 }

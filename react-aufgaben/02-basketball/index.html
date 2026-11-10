@@ -22,27 +22,6 @@
 
         const { useState, useEffect } = React;
 
-        // Daten holen: zuerst aus daten.js (gespeichert), sonst aus dem Zwischenspeicher, sonst aus dem Internet.
-        // So bleiben wir unter dem Limit der kostenlosen API (30 Anfragen pro Minute), auch mit der ganzen Klasse.
-        function holeDaten(adresse) {
-            if (window.GESPEICHERTE_DATEN && window.GESPEICHERTE_DATEN[adresse]) {
-                return Promise.resolve(window.GESPEICHERTE_DATEN[adresse]);
-            }
-            try {
-                const gespeichert = sessionStorage.getItem(adresse);
-                if (gespeichert) return Promise.resolve(JSON.parse(gespeichert));
-            } catch (e) { /* ohne Zwischenspeicher weiterarbeiten */ }
-            return fetch(adresse)
-                .then((antwort) => {
-                    if (!antwort.ok) throw new Error("HTTP " + antwort.status);
-                    return antwort.json();
-                })
-                .then((daten) => {
-                    try { sessionStorage.setItem(adresse, JSON.stringify(daten)); } catch (e) { }
-                    return daten;
-                });
-        }
-
         const API_URL = "https://www.thesportsdb.com/api/v1/json/123/search_all_teams.php?l=NBA";
         const SPURS_URL = "https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t=San_Antonio_Spurs";
 
@@ -56,9 +35,25 @@
         // =====================================================
         // Eine Karte für EIN Team
         // =====================================================
-        function TeamKarte({ team, istFavorit, onFavorit, onKlick }) {
+        function TeamKarte({ team, istFavorit, onFavorit, onKlick, imVergleich, onVergleich }) {
+            let klassen = "karte";
+            if (istFavorit) klassen = klassen + " favorit";
+            if (imVergleich) klassen = klassen + " im-vergleich";   // ⭐⭐ Teil 4
+
             return (
-                <div className={istFavorit ? "karte favorit" : "karte"} onClick={onKlick}>
+                <div className={klassen} onClick={onKlick}>
+
+                    {/* ⭐⭐ Teil 4: Vergleichs-Knopf (fertig) */}
+                    <button
+                        className="vergleich-button"
+                        title="Team vergleichen"
+                        onClick={(e) => {
+                            e.stopPropagation();   // Vergleichs-Klick öffnet NICHT die Details
+                            onVergleich();
+                        }}
+                    >
+                        ⚔️
+                    </button>
 
                     {/* ✅ HTML 3: Logo (img), Name (h2), Abkürzung (span className="kurz"),
                                    Gründungsjahr (p) und Halle (p) */}
@@ -105,7 +100,8 @@
             const [spiel, setSpiel] = useState(null);
             useEffect(() => {
                 setSpiel(null);
-                holeDaten("https://www.thesportsdb.com/api/v1/json/123/eventslast.php?id=" + team.idTeam)
+                fetch("https://www.thesportsdb.com/api/v1/json/123/eventslast.php?id=" + team.idTeam)
+                    .then((antwort) => antwort.json())
                     .then((daten) => setSpiel(daten.results ? daten.results[0] : null));
             }, [team.idTeam]);
 
@@ -174,6 +170,104 @@
 
 
         // =====================================================
+        // ⭐⭐ TEIL 4: Zwei Teams im Vergleich
+        // =====================================================
+        function Vergleich({ teams, onLeeren }) {
+            const [links, rechts] = teams;
+
+            // Fertig: die Box rollt ins Bild, sobald zwei Teams ausgewählt sind
+            const box = useRef(null);
+            useEffect(() => {
+                box.current.scrollIntoView({ behavior: "smooth", block: "center" });
+            }, [links.idTeam, rechts.idTeam]);
+
+            // Fertig: Werte ausrechnen
+            function plaetze(team) {
+                return Number(team.intStadiumCapacity) || 0;
+            }
+            function kanaele(team) {
+                return [team.strInstagram, team.strFacebook, team.strTwitter, team.strYoutube].filter(Boolean).length;
+            }
+            function wer(wertLinks, wertRechts, kleinerGewinnt) {
+                if (!wertLinks || !wertRechts || wertLinks === wertRechts) return "";
+                const linksBesser = kleinerGewinnt ? wertLinks < wertRechts : wertLinks > wertRechts;
+                return linksBesser ? "links" : "rechts";
+            }
+
+            // Fertig: die Zeilen vom Vergleich
+            const zeilen = [
+                {
+                    titel: "📅 Gegründet",
+                    links: links.intFormedYear,
+                    rechts: rechts.intFormedYear,
+                    sieger: wer(Number(links.intFormedYear), Number(rechts.intFormedYear), true)   // älter gewinnt
+                },
+                {
+                    titel: "🏟️ Plätze in der Halle",
+                    links: plaetze(links) ? plaetze(links).toLocaleString("de-DE") : "?",
+                    rechts: plaetze(rechts) ? plaetze(rechts).toLocaleString("de-DE") : "?",
+                    sieger: wer(plaetze(links), plaetze(rechts), false)   // mehr gewinnt
+                },
+                {
+                    titel: "📱 Social-Media-Kanäle",
+                    links: kanaele(links),
+                    rechts: kanaele(rechts),
+                    sieger: wer(kanaele(links), kanaele(rechts), false)   // mehr gewinnt
+                }
+            ];
+
+            const punkteLinks = zeilen.filter((z) => z.sieger === "links").length;
+            const punkteRechts = zeilen.filter((z) => z.sieger === "rechts").length;
+            let ergebnis = "🤝 Unentschieden!";
+            if (punkteLinks > punkteRechts) ergebnis = "🏆 " + links.strTeam + " gewinnt den Vergleich!";
+            if (punkteRechts > punkteLinks) ergebnis = "🏆 " + rechts.strTeam + " gewinnt den Vergleich!";
+
+            return (
+                <section className="vergleich" ref={box}>
+                    <button className="leeren" title="Vergleich schließen" onClick={onLeeren}>✕</button>
+
+                    {/* ✏️ DEIN HTML 11: Überschrift (h2) "⚔️ Team-Vergleich" */}
+
+
+                    <div className="vergleich-kopf">
+                        <div className="vergleich-team">
+                            {/* ✏️ DEIN HTML 12: Logo (img) und Name (h3) vom linken Team:
+                                                {links.strBadge} und {links.strTeam} */}
+
+                        </div>
+
+                        <span className="vs">VS</span>
+
+                        <div className="vergleich-team">
+                            {/* ✏️ DEIN HTML 12: dasselbe für das rechte Team:
+                                                {rechts.strBadge} und {rechts.strTeam} */}
+
+                        </div>
+                    </div>
+
+                    {zeilen.map((zeile) => (
+                        <div key={zeile.titel} className="vergleich-zeile">
+                            <span className={zeile.sieger === "links" ? "wert gewinner" : "wert"}>
+                                {/* ✏️ DEIN HTML 13: der Wert vom linken Team {zeile.links} */}
+                            </span>
+                            <span className="titel">
+                                {/* ✏️ DEIN HTML 13: der Titel {zeile.titel} */}
+                            </span>
+                            <span className={zeile.sieger === "rechts" ? "wert gewinner" : "wert"}>
+                                {/* ✏️ DEIN HTML 13: der Wert vom rechten Team {zeile.rechts} */}
+                            </span>
+                        </div>
+                    ))}
+
+                    {/* ✏️ DEIN HTML 14: das Ergebnis in einem div (className="ergebnis"):
+                                        ein p mit {punkteLinks} : {punkteRechts} und ein p mit {ergebnis} */}
+
+                </section>
+            );
+        }
+
+
+        // =====================================================
         // Die App (JavaScript ist fertig)
         // =====================================================
         function App() {
@@ -185,29 +279,30 @@
             const [ladeFehler, setLadeFehler] = useState("");
 
             const [ausgewaehlt, setAusgewaehlt] = useState(null);   // ⭐ angeklicktes Team
+            const [vergleich, setVergleich] = useState([]);          // ⭐⭐ Teams im Vergleich (höchstens 2)
 
             useEffect(() => {
-                setLaedt(true);
-                setLadeFehler("");
-                Promise.all([API_URL, SPURS_API_URL].map((url) =>
-                    holeDaten(url)
-                ))
-                    .then(([nbaDaten, spursDaten]) => {
-                        const alleTeams = nbaDaten.teams || [];
-                        (spursDaten.teams || []).forEach((team) => {
-                            if (!alleTeams.some((nbaTeam) => nbaTeam.idTeam === team.idTeam)) {
-                                alleTeams.push(team);
-                            }
-                        });
-                        setTeams(alleTeams);
-                    })
-                    .catch((fehler) => {
-                        console.error("NBA-Teams konnten nicht geladen werden:", fehler);
-                        const details = fehler instanceof Error ? ` (${fehler.message})` : "";
-                        setLadeFehler(`Die Teams konnten nicht geladen werden${details}. Bitte versuche es später erneut.`);
-                    })
-                    .finally(() => setLaedt(false));
+                // Der kostenlose Zugang liefert nur 10 Teams. Die Spurs laden wir extra dazu!
+                Promise.all([
+                    fetch(API_URL).then((antwort) => antwort.json()),
+                    fetch(SPURS_URL).then((antwort) => antwort.json())
+                ]).then(([daten, spurs]) => {
+                    const alle = [...(daten.teams || []), ...(spurs.teams || [])];
+                    const ohneDoppelte = alle.filter((team, i) => alle.findIndex((t) => t.idTeam === team.idTeam) === i);
+                    setTeams(ohneDoppelte.filter((team) => team.strSport === "Basketball"));
+                });
             }, []);
+
+            // ⭐⭐ TEIL 4 (fertig): Team in den Vergleich legen oder wieder rausnehmen
+            function vergleichUmschalten(team) {
+                if (vergleich.some((t) => t.idTeam === team.idTeam)) {
+                    setVergleich(vergleich.filter((t) => t.idTeam !== team.idTeam));
+                } else if (vergleich.length < 2) {
+                    setVergleich([...vergleich, team]);
+                } else {
+                    setVergleich([vergleich[1], team]);   // schon 2 da? Das erste fliegt raus
+                }
+            }
 
             function favoritUmschalten(id) {
                 if (favoriten.includes(id)) {
@@ -258,6 +353,19 @@
 
                     {/* ✅ HTML 2: Zähler (p className="zaehler") */}
                     <p className="zaehler">{anzahlTeams} Teams · {anzahlFavoriten} Favoriten ❤️</p>
+
+                    {/* ===================== ⭐⭐ TEIL 4: Vergleich ===================== */}
+                    {vergleich.length === 1 && (
+                        <div className="vergleich-hinweis">
+                            {/* ✏️ DEIN HTML 10: ein p mit "👉 Wähle noch ein Team zum Vergleichen (⚔️)" */}
+
+                        </div>
+                    )}
+
+                    {vergleich.length === 2 && (
+                        <Vergleich teams={vergleich} onLeeren={() => setVergleich([])} />
+                    )}
+
                     <div className="karten">
                         {gefilterteTeams.map((team) => (
                             <TeamKarte
@@ -266,6 +374,8 @@
                                 istFavorit={favoriten.includes(team.idTeam)}
                                 onFavorit={() => favoritUmschalten(team.idTeam)}
                                 onKlick={() => setAusgewaehlt(team)}
+                                imVergleich={vergleich.some((t) => t.idTeam === team.idTeam)}
+                                onVergleich={() => vergleichUmschalten(team)}
                             />
                         ))}
                     </div>

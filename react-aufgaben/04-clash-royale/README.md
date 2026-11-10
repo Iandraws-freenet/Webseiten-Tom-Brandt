@@ -172,6 +172,93 @@ Das JavaScript ist **schon fertig**.
 
 ---
 
+## Teil 4 – ⭐⭐ Erweiterung: Zufalls-Deck und Deck-Analyse
+
+Keine Idee für ein Deck? Unter dem Deck gibt es jetzt einen **🎲 Zufalls-Knopf**, der dir 8 zufällige Karten gibt.
+Und sobald eine Karte im Deck liegt, erscheint die **📊 Deck-Analyse**: Wie viele Truppen, Gebäude und Zauber hast du?
+Ist dein Deck schnell oder schwer? Und die **Elixier-Kurve** zeigt, wie viele Karten 1, 2, 3 ... Elixier kosten.
+Das JavaScript ist **schon fertig**.
+
+```
+  +----------------- Dein Deck -----------------+
+  | [Knight] [Archers] [Fireball] [Log] ...     |
+  |   Ø Elixier: 3.4 💧        8 / 8 Karten      |
+  |     [🎲 Zufalls-Deck]  [🗑️ Deck leeren]      |
+  +---------------------------------------------+
+
+  +--------------- 📊 Deck-Analyse -------------+
+  |            ⚖️ Ausgeglichenes Deck           |
+  |                                             |
+  |  ⚔️ Truppen   🏰 Gebäude   ✨ Zauber   🔄 Zyklus |
+  |      5            1           2          9   |
+  |                                             |
+  |              💧 Elixier-Kurve               |
+  |          1   1   3   1   1   1   0          |  ← Anzahl
+  |                  █                          |
+  |                  █                          |
+  |          █   █   █   █   █   █   ▁          |
+  |          1   2   3   4   5   6   7+         |  ← Elixier
+  +---------------------------------------------+
+```
+
+**So funktioniert es:**
+- 🎲 Zufalls-Deck → 8 zufällige Karten, wie im echten Spiel mit **höchstens einem Champion**
+- 🗑️ Deck leeren → alle Karten fliegen raus (der Knopf ist grau, wenn das Deck leer ist)
+- Die Analyse-Box hat je nach Deck eine zusätzliche Klasse:
+
+  | Ø Elixier | Deck-Typ | Klasse |
+  |-----------|----------|--------|
+  | unter 3 | ⚡ Schnelles Deck | `schnell` |
+  | 3 bis 4 | ⚖️ Ausgeglichenes Deck | `mittel` |
+  | über 4 | 🐘 Schweres Deck | `schwer` |
+
+- **Zyklus** heißt: So viel Elixier kosten deine **4 billigsten Karten** zusammen. Je kleiner, desto schneller hast du deine beste Karte wieder auf der Hand!
+
+**Neue Werte, die du benutzen kannst:**
+
+| Das schreibst du | Das erscheint |
+|------------------|---------------|
+| `{deckTyp}` | *⚡ Schnelles Deck*, *⚖️ Ausgeglichenes Deck* oder *🐘 Schweres Deck* |
+| `{anzahlTruppen}` | Wie viele Truppen im Deck sind |
+| `{anzahlGebaeude}` | Wie viele Gebäude im Deck sind |
+| `{anzahlZauber}` | Wie viele Zauber im Deck sind |
+| `{zyklus}` | Elixier der 4 billigsten Karten zusammen |
+| `{stufe.anzahl}` | Wie viele Karten diese Elixier-Kosten haben |
+| `{stufe.name}` | Die Elixier-Kosten: *1*, *2*, ... *7+* |
+
+### To-do HTML
+- [ ] **HTML 11 – Knöpfe:** In die zwei leeren Knöpfe unter dem Deck kommt der Text „🎲 Zufalls-Deck“ und „🗑️ Deck leeren“.
+- [ ] **HTML 12 – Analyse-Kopf:** Lege eine Karte ins Deck. Jetzt erscheint die Analyse-Box. Schreibe hinein:
+  `<h2>📊 Deck-Analyse</h2>` und `<p className="deck-typ">{deckTyp}</p>`
+- [ ] **HTML 13 – Analyse-Kästchen:** vier Kästchen, genauso wie die Werte in Teil 3:
+  ```jsx
+  <div className="analyse-wert">
+      <span>⚔️ Truppen</span>
+      <strong>{anzahlTruppen}</strong>
+  </div>
+  ```
+  Mach dasselbe für 🏰 Gebäude, ✨ Zauber und 🔄 Zyklus.
+- [ ] **HTML 14 – Elixier-Kurve:** `<h3>💧 Elixier-Kurve</h3>`. Dann in jede Spalte oben die Anzahl `{stufe.anzahl}` und unten die Elixier-Kosten `{stufe.name}`.
+  Die Säulen selbst macht das JavaScript, sie sind nur noch unsichtbar.
+
+### To-do CSS (unten in `style.css`, Bereich **TEIL D**)
+- [ ] **CSS 15 – Knöpfe:** Zufalls-Knopf in Gold mit dunkelblauer fetter Schrift, Leeren-Knopf in Rot (z. B. `#e53935`) mit weißer Schrift. Beide mit runden Ecken und ohne Rahmen (`border: none;`).
+- [ ] **CSS 16 – Analyse-Box:** Hintergrund wie die Deck-Box, dicker Rahmen (`border: 3px solid gray;`), runde Ecken, Innenabstand. Überschrift in Gold, Deck-Typ groß und fett.
+- [ ] **CSS 17 – Farbe je Deck-Typ:** Gib jeder Klasse eine eigene **Rahmenfarbe** (`border-color`):
+  `.analyse.schnell` grün `#4caf50`, `.analyse.mittel` gold `#ffd700`, `.analyse.schwer` rot `#e53935`
+- [ ] **CSS 18 – Analyse-Kästchen:** Hintergrund (z. B. `rgba(255, 255, 255, 0.1)`), runde Ecken. Die Zahl (`strong`) groß, z. B. `font-size: 26px;`
+- [ ] **CSS 19 – Elixier-Kurve:** Die Säulen (`.saeule`) bekommen eine Farbe, damit man sie sieht! Pink `#d63fd6` wie der Elixier-Tropfen passt super.
+  Runde Ecken nur oben: `border-radius: 6px 6px 0 0;`. Die Elixier-Kosten (`.kurve-elixier`) fett.
+
+> 💡 Probier mal ein paar Zufalls-Decks aus und schau, wie sich die Farbe der Analyse-Box und die Kurve ändern!
+
+### Extra-Ideen zu Teil 4
+- [ ] Mach die Säulen zu einem Farbverlauf: `background: linear-gradient(180deg, #ff7ff5, #9c27b0);`
+- [ ] Der Zufalls-Knopf soll sich beim Drüberfahren drehen: `.zufall-button:hover { transform: rotate(-5deg) scale(1.05); }`
+- [ ] Für Mutige mit JavaScript: Ändere die Grenzen für „schnell“ und „schwer“ (die Zahlen `3` und `4` im Code).
+
+---
+
 ## Tipps
 - In React heißt es **`className`** statt `class`.
 - Jedes Tag muss geschlossen werden, auch `<img ... />`.

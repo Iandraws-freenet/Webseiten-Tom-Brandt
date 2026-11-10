@@ -38,7 +38,7 @@ Wenn du mit HTML und CSS fertig bist, geht es weiter mit den
 ## Und dann: React
 
 Zum Schluss baust du echte **Sport-Apps** mit React und Live-Daten aus dem Internet:
-**[React-Aufgaben](react-aufgaben/)**: ⚽ Fußball, 🏀 Basketball, 🏊 Schwimmen, 👑 Clash Royale, ⛏️ Minecraft-Hotbar und 🛠️ Minecraft-Werkbank.
+**[React-Aufgaben](react-aufgaben/)**: ⚽ Fußball, 🏀 Basketball, 🏊 Schwimmen, 👑 Clash Royale, ⛏️ Minecraft-Hotbar, 🛠️ Minecraft-Werkbank, 🎯 Valorant und 🔴 Pokémon.
 
 ## Hilfreiche Links
 

@@ -1,6 +1,6 @@
-# React-Aufgaben: Sport- und Spiele-Apps ⚽🏀🏊👑⛏️🛠️
+# React-Aufgaben: Sport- und Spiele-Apps ⚽🏀🏊👑⛏️🛠️🎯🔴
 
-In diesen 6 Aufgaben baust du kleine **Sport- und Spiele-Apps** mit **React**.
+In diesen 8 Aufgaben baust du kleine **Sport- und Spiele-Apps** mit **React**.
 Die Daten (Teams, Wappen, Sportler) kommen **live aus dem Internet**.
 
 **Das JavaScript ist komplett fertig.** Du schreibst nur:
@@ -33,7 +33,7 @@ Deine App  ◀──── Liste mit Teams, Wappen ...  ────  Sport-Serv
 
 Das Bestellen macht der Befehl `fetch`. Den haben wir schon für dich geschrieben.
 
-## Die 6 Aufgaben
+## Die 8 Aufgaben
 
 | Nr. | Aufgabe | Die fertige App kann … | Du gestaltest … |
 |-----|---------|------------------------|-----------------|
@@ -43,9 +43,21 @@ Das Bestellen macht der Befehl `fetch`. Den haben wir schon für dich geschriebe
 | 04 | [Clash Royale](04-clash-royale/) | Alle Karten anzeigen, filtern, eigenes Deck aus 8 Karten bauen | Kopf, Karten mit Elixier-Tropfen, Seltenheits-Farben, Deck |
 | 05 | [Minecraft](05-minecraft/) | Über 500 Blöcke anzeigen, nach Werkzeug filtern, eigene Hotbar aus 9 Blöcken bauen | Kopf, Block-Karten, Härte-Farben, Hotbar |
 | 06 | [Minecraft-Werkbank](06-minecraft-werkbank/) | Items ins 3x3-Feld legen, über 2000 echte Rezepte erkennen, Items bauen | Werkbank-Fenster im 3D-Look, Slots, Ergebnis, Inventar, Rezept-Ideen |
+| 07 | [Valorant](07-valorant/) | Alle Agenten anzeigen, nach Rolle filtern, eigenes Team aus 5 Agenten bauen | Kopf, Agenten-Karten, Rollen-Farben, Team |
+| 08 | [Pokémon](08-pokemon/) | 151 Pokémon im Pokédex, suchen, nach Typ filtern, eigenes Team aus 6 bauen | Kopf, Pokémon-Karten, Typ-Farben, Team im Pokéball-Look |
 
 Jede Aufgabe hat 2 Teile: **Teil 1 – HTML** und **Teil 2 – CSS**.
-Fußball, Basketball und Clash Royale haben zusätzlich **Teil 3 – ⭐ Erweiterung**: Klick auf ein Team oder eine Karte → mehr Infos und Links ins Internet.
+Fußball, Basketball, Clash Royale, Valorant und Pokémon haben zusätzlich **Teil 3 – ⭐ Erweiterung**: Klick auf ein Team, eine Karte, einen Agenten oder ein Pokémon → mehr Infos und Links ins Internet.
+Und für Profis gibt es dort noch **Teil 4 – ⭐⭐ Erweiterung**:
+
+| Aufgabe | Teil 4 |
+|---------|--------|
+| ⚽ Fußball | 🏆 Tabelle der Liga und 👥 Spieler mit Foto und Rückennummer |
+| 🏀 Basketball | ⚔️ Team-Vergleich: Welches Team gewinnt? |
+| 👑 Clash Royale | 🎲 Zufalls-Deck und 📊 Deck-Analyse mit Elixier-Kurve |
+| 🎯 Valorant | 🎲 Zufalls-Team, 📊 Team-Analyse und 🗺️ Map-Wahl |
+| 🔴 Pokémon | 🎲 Zufalls-Team, 📊 Team-Analyse und ❓ Quiz „Wer ist das Pokémon?“ |
+
 Suche im Code nach **`DEIN HTML`** und **`DEIN CSS`**.
 
 ## So startest du
@@ -75,8 +87,16 @@ Suche im Code nach **`DEIN HTML`** und **`DEIN CSS`**.
 ## Woher kommen die Daten?
 
 - Fußball und Basketball: [TheSportsDB](https://www.thesportsdb.com/) (kostenloser Test-Zugang)
+  > 👩‍🏫 **Für Lehrer:** Der kostenlose Zugang erlaubt nur **30 Anfragen pro Minute**, für die ganze Klasse zusammen.
+  > Deshalb liegen die Daten schon gespeichert in `01-fussball/daten.js` und `02-basketball/daten.js`.
+  > Für frische Daten (z. B. die aktuelle Tabelle) vor dem Unterricht im Ordner `react-aufgaben` ausführen:
+  > `node daten-aktualisieren.js` (dauert 20 bis 30 Minuten, nur eine Aufgabe: `node daten-aktualisieren.js fussball`).
 - Schwimmen: [Wikipedia](https://de.wikipedia.org/)
 - Clash Royale: [RoyaleAPI](https://royaleapi.com/) (Clash Royale ist eine Marke von Supercell)
 - Minecraft (Hotbar und Werkbank): [PrismarineJS](https://github.com/PrismarineJS) (Minecraft ist eine Marke von Mojang Studios)
+- Valorant: [valorant-api.com](https://valorant-api.com) (kostenlos, ohne Key; Valorant ist eine Marke von Riot Games).
+  Die Agenten liegen zusätzlich in `07-valorant/daten.js`. Aktualisieren: `node daten-aktualisieren.js valorant` (dauert ein paar Sekunden).
+- Pokémon: [PokéAPI](https://pokeapi.co) (kostenlos, ohne Key; Pokémon ist eine Marke von Nintendo, Game Freak und The Pokémon Company).
+  Die PokéAPI erlaubt nur 100 Abfragen pro Stunde, deshalb liegen die 151 Pokémon in `08-pokemon/daten.js`. Aktualisieren: `node daten-aktualisieren.js pokemon` (dauert ein paar Sekunden).
 
 Viel Spaß! 🚀

@@ -156,6 +156,90 @@ Das JavaScript ist **schon fertig**. Der Herz-Button öffnet die Box übrigens *
 
 ---
 
+## Teil 4 – ⭐⭐ Erweiterung: Team-Vergleich
+
+Welches Team ist besser? Jede Karte hat jetzt oben rechts einen **⚔️-Knopf**.
+Klickst du bei **zwei Teams** auf ⚔️, erscheint ein **Vergleich**: Wer ist älter, wer hat die größere Halle, wer ist mehr auf Social Media?
+Das JavaScript ist **schon fertig**: Es rechnet für jede Zeile aus, wer gewinnt, und zählt die Punkte.
+
+```
+   Nach dem ersten ⚔️:
+   +------------------------------------------+
+   | 👉 Wähle noch ein Team zum Vergleichen   |
+   +------------------------------------------+
+
+   Nach dem zweiten ⚔️:
+   +------------------------------------------+
+   |            ⚔️ Team-Vergleich         [✕] |
+   |                                          |
+   |   [Logo]            VS          [Logo]   |
+   |   Spurs                         Lakers   |
+   |                                          |
+   |   1967       📅 Gegründet        1947    |  ← der Gewinner
+   |   18.418  🏟️ Plätze in der Halle 19.068  |    jeder Zeile wird
+   |   4      📱 Social-Media-Kanäle    4     |    größer
+   |                                          |
+   |                  0 : 2                   |
+   |  🏆 Los Angeles Lakers gewinnt den       |
+   |     Vergleich!                           |
+   +------------------------------------------+
+```
+
+**So funktioniert es:**
+- ⚔️ bei einem Team → es kommt in den Vergleich (die Karte hat dann die Klasse `im-vergleich`)
+- nochmal ⚔️ beim selben Team → es fliegt wieder raus
+- ⚔️ bei einem dritten Team → das erste Team fliegt raus, das neue kommt dazu
+- ✕ in der Vergleichs-Box → alles wird geleert
+- Wer in einer Zeile gewinnt, bekommt die Klasse `gewinner`. Ältere Teams gewinnen beim Gründungsjahr!
+
+**Neue Werte, die du benutzen kannst:**
+
+| Das schreibst du | Das erscheint |
+|------------------|---------------|
+| `{links.strBadge}` / `{rechts.strBadge}` | Logo vom linken / rechten Team |
+| `{links.strTeam}` / `{rechts.strTeam}` | Name vom linken / rechten Team |
+| `{zeile.titel}` | Was verglichen wird, z. B. *📅 Gegründet* |
+| `{zeile.links}` / `{zeile.rechts}` | Wert vom linken / rechten Team |
+| `{punkteLinks}` / `{punkteRechts}` | Wie viele Zeilen jedes Team gewonnen hat |
+| `{ergebnis}` | Wer gewinnt, z. B. *🏆 San Antonio Spurs gewinnt den Vergleich!* |
+
+### To-do HTML
+- [ ] **HTML 10 – Hinweis:** Klicke bei einem Team auf ⚔️. Jetzt erscheint eine leere Box. Schreibe hinein:
+  `<p>👉 Wähle noch ein Team zum Vergleichen (⚔️)</p>`
+- [ ] **HTML 11 – Überschrift:** Klicke bei einem zweiten Team auf ⚔️. In die Vergleichs-Box kommt `<h2>⚔️ Team-Vergleich</h2>`.
+- [ ] **HTML 12 – Die zwei Teams:** links und rechts je ein Logo und ein Name:
+  ```jsx
+  <img src={links.strBadge} alt={links.strTeam} />
+  <h3>{links.strTeam}</h3>
+  ```
+  Auf der rechten Seite dasselbe mit `rechts`.
+- [ ] **HTML 13 – Zeilen:** In die drei `<span>` jeder Zeile kommen `{zeile.links}`, `{zeile.titel}` und `{zeile.rechts}`.
+- [ ] **HTML 14 – Ergebnis:**
+  ```jsx
+  <div className="ergebnis">
+      <p>{punkteLinks} : {punkteRechts}</p>
+      <p>{ergebnis}</p>
+  </div>
+  ```
+
+### To-do CSS (unten in `style.css`, Bereich **TEIL D**)
+- [ ] **CSS 14 – ⚔️-Knopf und Karte im Vergleich:** Knopf mit dunklem Hintergrund (rund ist er schon).
+  Eine Karte im Vergleich (`.karte.im-vergleich`) bekommt einen silbernen Rahmen, z. B. `border-color: #c4ced4;`
+- [ ] **CSS 15 – Hinweis-Box:** Hintergrund, gestrichelter Rahmen (`border: 2px dashed ...`), Innenabstand, runde Ecken
+- [ ] **CSS 16 – Vergleichs-Box:** dunkler Hintergrund (`#1a1a1a`), silberner Rahmen, Innenabstand, runde Ecken. Die `h2` in Silber.
+- [ ] **CSS 17 – VS und Zeilen:** „VS“ groß, fett und silbern, z. B. `font-size: 32px;`. Jede Zeile mit einer feinen Linie oben (`border-top: 1px solid #333333;`).
+- [ ] **CSS 18 – Gewinner und Ergebnis:** Der Gewinner-Wert (`.gewinner`) fett und in einer leuchtenden Farbe.
+  Das Ergebnis mit Hintergrund (Silber), schwarzer Schrift, runden Ecken und großer Schrift.
+
+> 💡 `transform: scale(1.2);` für `.gewinner` ist oben schon fertig. Deshalb wird der Gewinner etwas größer!
+
+### Extra-Ideen zu Teil 4
+- [ ] Gib der Vergleichs-Box einen silbernen Leuchtrahmen: `box-shadow: 0 0 25px #c4ced4;`
+- [ ] Schreib vor den Gewinner-Wert eine Krone. Tipp: `.gewinner::before { content: "👑 "; }`
+- [ ] Für Mutige mit JavaScript: Füge eine vierte Zeile hinzu, z. B. *🔤 Länge vom Namen* mit `links.strTeam.length`.
+
+---
+
 ## Tipps
 - In React heißt es **`className`** statt `class`.
 - Jedes Tag muss geschlossen werden, auch `<img ... />`.

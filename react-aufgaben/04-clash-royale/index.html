@@ -159,7 +159,8 @@
                             .filter((k) => !k.is_evolved)
                             .sort((a, b) => a.elixir - b.elixir);
                         setKarten(normaleKarten);
-                    });
+                    })
+                    .catch(() => setKarten([]));
             }, []);
 
             function karteUmschalten(karte) {
@@ -183,6 +184,56 @@
             // ⭐ Erweiterung (fertig): Links für das fertige Deck
             const deckImSpiel = "https://link.clashroyale.com/deck/de?deck=" + deck.map((k) => k.id).join(";");
             const deckStatistik = "https://royaleapi.com/decks/stats/" + deck.map((k) => k.key).join(",");
+
+            // ⭐⭐ TEIL 4 (fertig): ein zufälliges Deck aus 8 Karten (wie im echten Spiel höchstens 1 Champion)
+            function zufallsDeck() {
+                const gemischt = [...karten];
+                for (let i = gemischt.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [gemischt[i], gemischt[j]] = [gemischt[j], gemischt[i]];
+                }
+                const neuesDeck = [];
+                for (const karte of gemischt) {
+                    const schonChampion = neuesDeck.some((k) => k.rarity === "Champion");
+                    if (karte.rarity === "Champion" && schonChampion) continue;
+                    neuesDeck.push(karte);
+                    if (neuesDeck.length === DECK_GROESSE) break;
+                }
+                setDeck(neuesDeck);
+            }
+
+            function deckLeeren() {
+                setDeck([]);
+            }
+
+            // ⭐⭐ TEIL 4 (fertig): Deck-Analyse
+            const anzahlTruppen = deck.filter((k) => k.type === "Troop").length;
+            const anzahlGebaeude = deck.filter((k) => k.type === "Building").length;
+            const anzahlZauber = deck.filter((k) => k.type === "Spell").length;
+
+            // Zyklus = so viel Elixier kosten die 4 billigsten Karten zusammen
+            const zyklus = [...deck]
+                .sort((a, b) => a.elixir - b.elixir)
+                .slice(0, 4)
+                .reduce((summe, k) => summe + k.elixir, 0);
+
+            let deckTyp = "⚖️ Ausgeglichenes Deck";
+            let deckKlasse = "mittel";
+            if (Number(durchschnitt) < 3) {
+                deckTyp = "⚡ Schnelles Deck";
+                deckKlasse = "schnell";
+            } else if (Number(durchschnitt) > 4) {
+                deckTyp = "🐘 Schweres Deck";
+                deckKlasse = "schwer";
+            }
+
+            // Elixier-Kurve: wie viele Karten kosten 1, 2, 3, ... Elixier? (7 und mehr zusammen)
+            const stufen = [1, 2, 3, 4, 5, 6, 7].map((elixier) => ({
+                name: elixier === 7 ? "7+" : String(elixier),
+                anzahl: deck.filter((k) => (elixier === 7 ? k.elixir >= 7 : k.elixir === elixier)).length
+            }));
+            const meiste = Math.max(1, ...stufen.map((s) => s.anzahl));
+            const kurve = stufen.map((s) => ({ ...s, hoehe: (s.anzahl / meiste) * 100 }));
 
             return (
                 <div className="seite">
@@ -209,6 +260,16 @@
                            <p>Ø Elixier: {durchschnitt} 💧</p> <p>{anzahlImDeck} / 8 Karten</p>
 
                         </div>
+
+                        {/* ⭐⭐ TEIL 4: zwei Knöpfe (das JavaScript ist fertig) */}
+                        <div className="deck-knoepfe">
+                            <button className="zufall-button" onClick={zufallsDeck} disabled={karten.length === 0}>
+                                {/* ✏️ DEIN HTML 11: Text "🎲 Zufalls-Deck" */}
+                            </button>
+                            <button className="leeren-button" onClick={deckLeeren} disabled={anzahlImDeck === 0}>
+                                {/* ✏️ DEIN HTML 11: Text "🗑️ Deck leeren" */}
+                            </button>
+                        </div>
                     </section>
 
                     {anzahlImDeck === DECK_GROESSE && (
@@ -216,6 +277,42 @@
                             {/* ✏️ DEIN HTML 5: "🎉 Dein Deck ist komplett!" */}
                             🎉 Dein Deck ist komplett!
                         </div>
+                    )}
+
+                    {/* ===================== ⭐⭐ TEIL 4: Deck-Analyse ===================== */}
+                    {anzahlImDeck > 0 && (
+                        <section className={"analyse " + deckKlasse}>
+                            {/* ✏️ DEIN HTML 12: Überschrift (h2) "📊 Deck-Analyse" und ein p (className="deck-typ") mit {deckTyp} */}
+
+
+                            <div className="analyse-werte">
+                                {/* ✏️ DEIN HTML 13: vier Kästchen (div className="analyse-wert"), in jedem
+                                                    ein Titel (span) und eine Zahl (strong):
+                                                    ⚔️ Truppen {anzahlTruppen}, 🏰 Gebäude {anzahlGebaeude},
+                                                    ✨ Zauber {anzahlZauber}, 🔄 Zyklus {zyklus} */}
+
+
+                            </div>
+
+                            {/* ✏️ DEIN HTML 14: Überschrift (h3) "💧 Elixier-Kurve" */}
+
+
+                            <div className="kurve">
+                                {kurve.map((stufe) => (
+                                    <div key={stufe.name} className="kurve-spalte">
+                                        <span className="kurve-anzahl">
+                                            {/* ✏️ DEIN HTML 14: die Anzahl {stufe.anzahl} */}
+                                        </span>
+                                        <div className="saeule-platz">
+                                            <div className="saeule" style={{ height: stufe.hoehe + "%" }}></div>
+                                        </div>
+                                        <span className="kurve-elixier">
+                                            {/* ✏️ DEIN HTML 14: die Elixier-Kosten {stufe.name} */}
+                                        </span>
+                                    </div>
+                                ))}
+                            </div>
+                        </section>
                     )}
 
                     <nav className="filter-leiste">

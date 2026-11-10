@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valorant-Teambuilder</title>
+    <link rel="stylesheet" href="style.css">
+
+    <!-- React und Babel aus dem Internet laden (nicht verändern) -->
+    <script src="https://cdn.jsdelivr.net/npm/react@18.3.1/umd/react.development.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/react-dom@18.3.1/umd/react-dom.development.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@babel/standalone@7.26.4/babel.min.js"></script>
+
+    <!-- Gespeicherte Valorant-Daten (erzeugt mit: node daten-aktualisieren.js valorant) -->
+    <script src="daten.js"></script>
+</head>
+<body>
+
+    <div id="root"></div>
+
+    <script type="text/babel">
+
+        const { useState, useEffect } = React;
+
+        const AGENTEN_URL = "https://valorant-api.com/v1/agents?isPlayableCharacter=true&language=de-DE";
+        const MAPS_URL = "https://valorant-api.com/v1/maps?language=de-DE";
+        const TEAM_GROESSE = 5;
+
+        // Daten holen: zuerst aus daten.js (gespeichert), sonst aus dem Zwischenspeicher, sonst aus dem Internet.
+        function holeDaten(adresse) {
+            if (window.GESPEICHERTE_DATEN && window.GESPEICHERTE_DATEN[adresse]) {
+                return Promise.resolve(window.GESPEICHERTE_DATEN[adresse]);
+            }
+            try {
+                const gespeichert = sessionStorage.getItem(adresse);
+                if (gespeichert) return Promise.resolve(JSON.parse(gespeichert));
+            } catch (e) { /* ohne Zwischenspeicher weiterarbeiten */ }
+            return fetch(adresse)
+                .then((antwort) => {
+                    if (!antwort.ok) throw new Error("HTTP " + antwort.status);
+                    return antwort.json();
+                })
+                .then((daten) => {
+                    try { sessionStorage.setItem(adresse, JSON.stringify(daten)); } catch (e) { }
+                    return daten;
+                });
+        }
+
+        // Die 4 Rollen in Valorant
+        const ROLLEN = [
+            { name: "Duellant", klasse: "duellant", emoji: "⚔️" },
+            { name: "Initiator", klasse: "initiator", emoji: "🔍" },
+            { name: "Wächter", klasse: "waechter", emoji: "🛡️" },
+            { name: "Taktiker", klasse: "taktiker", emoji: "🌫️" }
+        ];
+
+        function rollenKlasse(agent) {
+            const rolle = ROLLEN.find((r) => r.name === agent.role.displayName);
+            return rolle ? rolle.klasse : "";
+        }
+
+        // ⭐ Erweiterung: Tasten der Fähigkeiten (in dieser Reihenfolge wie im Spiel)
+        const TASTEN = { Grenade: "C", Ability1: "Q", Ability2: "E", Ultimate: "X", Passive: "Passiv" };
+        const TASTEN_REIHENFOLGE = ["Grenade", "Ability1", "Ability2", "Ultimate", "Passive"];
+
+
+        // =====================================================
+        // Eine Agenten-Karte in der großen Liste
+        // =====================================================
+        function AgentKarte({ agent, imTeam, onKlick, onInfo }) {
+            const bild = agent.displayIcon;
+            const rolle = agent.role.displayName;
+
+            let klassen = "karte " + rollenKlasse(agent);
+            if (imTeam) klassen = klassen + " im-team";
+
+            return (
+                <div className={klassen} onClick={onKlick}>
+
+                    {/* ✏️ DEIN HTML 2: Bild (img) mit src={bild}, Name (h3) und Rolle (p className="rolle") */}
+
+
+                    {/* ⭐ Erweiterung: Info-Knopf (fertig) */}
+                    <button
+                        className="info-button"
+                        title="Mehr Infos"
+                        onClick={(e) => {
+                            e.stopPropagation();   // Info-Klick legt den Agenten NICHT ins Team
+                            onInfo();
+                        }}
+                    >
+                        ℹ️
+                    </button>
+                </div>
+            );
+        }
+
+
+        // =====================================================
+        // Ein Agent oben im Team
+        // =====================================================
+        function TeamAgent({ agent, onKlick }) {
+            const bild = agent.displayIcon;
+
+            return (
+                <div className={"team-agent " + rollenKlasse(agent)} onClick={onKlick}>
+
+                    {/* ✏️ DEIN HTML 3: Bild (img) und Name (p) */}
+
+                </div>
+            );
+        }
+
+
+        // =====================================================
+        // ⭐ ERWEITERUNG: Infos zu einem Agenten (Klick auf ℹ️)
+        // =====================================================
+        function AgentDetails({ agent, imTeam, teamVoll, onTeam, onSchliessen }) {
+            const portraet = agent.fullPortrait;
+            const rolle = agent.role.displayName;
+            const beschreibung = agent.description;
+
+            // Fertig: Hintergrund in den Farben vom Agenten
+            const farben = (agent.backgroundGradientColors || []).map((f) => "#" + f);
+            const hintergrund = {
+                backgroundImage: "url(" + agent.background + "), linear-gradient(160deg, " + farben.join(", ") + ")"
+            };
+
+            // Fertig: Fähigkeiten in der Reihenfolge C, Q, E, X, Passiv
+            const faehigkeiten = [...agent.abilities].sort(
+                (a, b) => TASTEN_REIHENFOLGE.indexOf(a.slot) - TASTEN_REIHENFOLGE.indexOf(b.slot)
+            );
+
+            // Fertig: Links ins Internet
+            const wiki = "https://valorant.fandom.com/wiki/" + encodeURIComponent(agent.displayName.replaceAll(" ", "_"));
+            const youtube = "https://www.youtube.com/results?search_query=" + encodeURIComponent("Valorant " + agent.displayName + " Guide");
+
+            let teamText = "➕ Ins Team";
+            if (imTeam) teamText = "➖ Aus dem Team";
+            else if (teamVoll) teamText = "Team ist voll";
+
+            return (
+                <div className="overlay" onClick={onSchliessen}>
+                    <div className={"details " + rollenKlasse(agent)} style={hintergrund} onClick={(e) => e.stopPropagation()}>
+                        <button className="schliessen" onClick={onSchliessen}>✕</button>
+
+                        {/* ✏️ DEIN HTML 7: großes Bild (img className="portraet") mit src={portraet},
+                                           Name (h2), Rolle (p className="rolle") und Beschreibung (p className="beschreibung") */}
+
+
+                        <div className="faehigkeiten">
+                            {faehigkeiten.map((faehigkeit) => (
+                                <div key={faehigkeit.slot} className="faehigkeit">
+                                    {faehigkeit.displayIcon && (
+                                        <>
+                                            {/* ✏️ DEIN HTML 8: Icon (img) mit src={faehigkeit.displayIcon} */}
+
+                                        </>
+                                    )}
+                                    {/* ✏️ DEIN HTML 8: Taste (span className="taste") mit {TASTEN[faehigkeit.slot]},
+                                                       Name (h4) mit {faehigkeit.displayName}
+                                                       und Beschreibung (p) mit {faehigkeit.description} */}
+
+                                </div>
+                            ))}
+                        </div>
+
+                        <div className="link-leiste">
+                            {/* ✏️ DEIN HTML 9: zwei Links (a className="link-button" target="_blank"):
+                                               📖 Wiki mit {wiki} und ▶️ YouTube mit {youtube} */}
+
+                        </div>
+
+                        <button className="team-button" onClick={onTeam} disabled={teamVoll && !imTeam}>
+                            {teamText}
+                        </button>
+                    </div>
+                </div>
+            );
+        }
+
+
+        // =====================================================
+        // Die App (JavaScript ist fertig)
+        // =====================================================
+        function App() {
+            const [agenten, setAgenten] = useState([]);
+            const [filter, setFilter] = useState("Alle");
+            const [team, setTeam] = useState([]);
+            const [fehler, setFehler] = useState(false);
+            const [infoAgent, setInfoAgent] = useState(null);   // ⭐ Agent mit offener Info-Box
+
+            // ⭐⭐ Teil 4: Maps
+            const [maps, setMaps] = useState([]);
+            const [map, setMap] = useState(null);
+
+            useEffect(() => {
+                holeDaten(AGENTEN_URL)
+                    .then((daten) => {
+                        const sortiert = [...daten.data].sort((a, b) => a.displayName.localeCompare(b.displayName));
+                        setAgenten(sortiert);
+                    })
+                    .catch(() => setFehler(true));
+
+                // ⭐⭐ Teil 4: nur Maps aus dem Wettkampf-Modus (die haben Areale A/B/C)
+                holeDaten(MAPS_URL)
+                    .then((daten) => setMaps(daten.data.filter((m) => m.tacticalDescription)))
+                    .catch(() => setMaps([]));
+            }, []);
+
+            function agentUmschalten(agent) {
+                if (team.some((a) => a.uuid === agent.uuid)) {
+                    setTeam(team.filter((a) => a.uuid !== agent.uuid));
+                } else if (team.length < TEAM_GROESSE) {
+                    setTeam([...team, agent]);
+                }
+            }
+
+            const angezeigteAgenten = filter === "Alle"
+                ? agenten
+                : agenten.filter((a) => a.role.displayName === filter);
+
+            const anzahlImTeam = team.length;
+            const leerePlaetze = TEAM_GROESSE - anzahlImTeam;
+
+            // ⭐⭐ TEIL 4 (fertig): Zufalls-Team: aus jeder Rolle einer, dazu ein fünfter beliebiger
+            function zufallsTeam() {
+                const zufall = (liste) => liste[Math.floor(Math.random() * liste.length)];
+                const neuesTeam = [];
+                for (const rolle of ROLLEN) {
+                    const auswahl = agenten.filter((a) => a.role.displayName === rolle.name);
+                    if (auswahl.length > 0) neuesTeam.push(zufall(auswahl));
+                }
+                const rest = agenten.filter((a) => !neuesTeam.includes(a));
+                while (neuesTeam.length < TEAM_GROESSE && rest.length > 0) {
+                    neuesTeam.push(rest.splice(Math.floor(Math.random() * rest.length), 1)[0]);
+                }
+                setTeam(neuesTeam);
+            }
+
+            function teamLeeren() {
+                setTeam([]);
+            }
+
+            // ⭐⭐ TEIL 4 (fertig): Team-Analyse
+            const rollenImTeam = ROLLEN.map((rolle) => ({
+                ...rolle,
+                anzahl: team.filter((a) => a.role.displayName === rolle.name).length
+            }));
+            const fehlendeRollen = rollenImTeam.filter((r) => r.anzahl === 0).map((r) => r.name);
+            const hinweis = fehlendeRollen.length === 0
+                ? "✅ Jede Rolle ist dabei. Starkes Team!"
+                : "⚠️ Dir fehlt noch: " + fehlendeRollen.join(", ");
+
+            return (
+                <div className="seite">
+
+                    <header>
+                        {/* ✏️ DEIN HTML 1: Überschrift (h1) und Untertitel (p className="untertitel") */}
+
+                    </header>
+
+                    <section className="team-box">
+                        <div className="team">
+                            {team.map((agent) => (
+                                <TeamAgent key={agent.uuid} agent={agent} onKlick={() => agentUmschalten(agent)} />
+                            ))}
+                            {Array.from({ length: leerePlaetze }).map((_, i) => (
+                                <div key={"leer" + i} className="leer-platz"></div>
+                            ))}
+                        </div>
+
+                        <div className="team-info">
+                            {/* ✏️ DEIN HTML 4: ein p mit {anzahlImTeam} / 5 Agenten */}
+
+                        </div>
+
+                        {/* ⭐⭐ TEIL 4: zwei Knöpfe (das JavaScript ist fertig) */}
+                        <div className="team-knoepfe">
+                            <button className="zufall-button" onClick={zufallsTeam} disabled={agenten.length === 0}>
+                                {/* ✏️ DEIN HTML 10: Text "🎲 Zufalls-Team" */}
+                            </button>
+                            <button className="leeren-button" onClick={teamLeeren} disabled={anzahlImTeam === 0}>
+                                {/* ✏️ DEIN HTML 10: Text "🗑️ Team leeren" */}
+                            </button>
+                        </div>
+                    </section>
+
+                    {anzahlImTeam === TEAM_GROESSE && (
+                        <div className="team-komplett">
+                            {/* ✏️ DEIN HTML 5: "🏆 Dein Team ist bereit!" */}
+
+                        </div>
+                    )}
+
+                    {/* ===================== ⭐⭐ TEIL 4: Team-Analyse ===================== */}
+                    {anzahlImTeam > 0 && (
+                        <section className="analyse">
+                            {/* ✏️ DEIN HTML 11: Überschrift (h2) "📊 Team-Analyse" und ein p (className="hinweis") mit {hinweis} */}
+
+
+                            <div className="rollen-liste">
+                                {rollenImTeam.map((rolle) => (
+                                    <div key={rolle.name} className={rolle.anzahl > 0 ? "rollen-zeile " + rolle.klasse : "rollen-zeile fehlt"}>
+                                        {/* ✏️ DEIN HTML 12: {rolle.emoji} und {rolle.name} (span) und die Anzahl {rolle.anzahl} (strong) */}
+
+                                    </div>
+                                ))}
+                            </div>
+                        </section>
+                    )}
+
+                    {/* ===================== ⭐⭐ TEIL 4: Map-Wahl ===================== */}
+                    {maps.length > 0 && (
+                        <section className="map-wahl">
+                            {/* ✏️ DEIN HTML 13: Überschrift (h2) "🗺️ Auf welcher Map spielt ihr?" */}
+
+
+                            <div className="map-leiste">
+                                {maps.map((m) => (
+                                    <button
+                                        key={m.uuid}
+                                        className={map && map.uuid === m.uuid ? "map-button aktiv" : "map-button"}
+                                        onClick={() => setMap(m)}
+                                    >
+                                        {/* ✏️ DEIN HTML 13: der Name der Map {m.displayName} */}
+                                    </button>
+                                ))}
+                            </div>
+
+                            {map && (
+                                <div className="gewaehlte-map">
+                                    {/* ✏️ DEIN HTML 14: Bild (img className="map-bild") mit src={map.splash},
+                                                        Name (h3) mit {map.displayName}
+                                                        und ein p mit {map.tacticalDescription} */}
+
+                                </div>
+                            )}
+                        </section>
+                    )}
+
+                    <nav className="filter-leiste">
+                        {["Alle", ...ROLLEN.map((r) => r.name)].map((f) => (
+                            <button
+                                key={f}
+                                className={f === filter ? "filter-button aktiv" : "filter-button"}
+                                onClick={() => setFilter(f)}
+                            >
+                                {f}
+                            </button>
+                        ))}
+                    </nav>
+
+                    {agenten.length === 0 && !fehler && <p className="laden">Agenten werden geladen ... 🎯</p>}
+                    {fehler && <p className="laden">😢 Die Agenten konnten nicht geladen werden. Lade die Seite neu (F5).</p>}
+
+                    <div className="karten">
+                        {angezeigteAgenten.map((agent) => (
+                            <AgentKarte
+                                key={agent.uuid}
+                                agent={agent}
+                                imTeam={team.some((a) => a.uuid === agent.uuid)}
+                                onKlick={() => agentUmschalten(agent)}
+                                onInfo={() => setInfoAgent(agent)}
+                            />
+                        ))}
+                    </div>
+
+                    {infoAgent && (
+                        <AgentDetails
+                            agent={infoAgent}
+                            imTeam={team.some((a) => a.uuid === infoAgent.uuid)}
+                            teamVoll={anzahlImTeam === TEAM_GROESSE}
+                            onTeam={() => agentUmschalten(infoAgent)}
+                            onSchliessen={() => setInfoAgent(null)}
+                        />
+                    )}
+
+                    <footer>
+                        {/* ✏️ DEIN HTML 6: "Daten und Bilder: valorant-api.com" und "Gebaut von DEIN NAME" (je ein p) */}
+
+                    </footer>
+
+                </div>
+            );
+        }
+
+        ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+
+    </script>
+</body>
+</html>

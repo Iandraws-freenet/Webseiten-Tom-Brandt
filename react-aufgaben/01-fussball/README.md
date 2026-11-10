@@ -148,6 +148,94 @@ Es lädt sogar das **letzte Spiel** vom Team aus dem Internet.
 
 ---
 
+## Teil 4 – ⭐⭐ Erweiterung: Tabelle und Spieler
+
+Jetzt wird es richtig sportlich! Unter den Liga-Buttons erscheint die **Tabelle** der Liga,
+und in der Detail-Box siehst du **Spieler** vom Team mit Foto und Rückennummer.
+Das JavaScript ist **schon fertig**: Es lädt die Tabelle und die Spieler aus dem Internet.
+
+```
+   [Bundesliga]  [Premier League]  [La Liga]
+
+  🏆 Tabelle
+  Saison 2026-2027 · Top 5
+  +-------+------------------+--------+----------+--------+---------------+
+  | Platz | Team             | Spiele | Tordiff. | Punkte | Form          |
+  +-------+------------------+--------+----------+--------+---------------+
+  |   1   | [W] Bayern       |   9    |   +18    |   21   | ✅ ✅ ➖ ✅ ✅ |
+  |   2   | [W] Dortmund     |   9    |   +10    |   21   | ✅ ❌ ✅ ✅ ✅ |  ← anklickbar
+  |  ...  |                  |        |          |        |               |
+  +-------+------------------+--------+----------+--------+---------------+
+
+  In der Detail-Box ganz unten:
+
+  👥 Spieler
+  +-------------+  +-------------+  +-------------+
+  |(9)          |  |(10)         |  |(19)         |
+  |   [Foto]    |  |   [Foto]    |  |   [Foto]    |
+  | Harry Kane  |  |   Musiala   |  |   Davies    |
+  | Stürmer · 33|  |Mittelf. · 23|  |Verteid. · 26|
+  +-------------+  +-------------+  +-------------+
+     ↑ Rückennummer
+```
+
+**So funktioniert es:**
+- Klick auf eine Zeile in der Tabelle → die Detail-Box vom Team geht auf
+- Das offene Team ist in der Tabelle **markiert** (Klasse `markiert`)
+- Der kostenlose Zugang liefert nur die **Top 5** der Tabelle und **10 Personen** pro Team
+
+**Neue Werte, die du benutzen kannst:**
+
+| Das schreibst du | Das erscheint |
+|------------------|---------------|
+| `{SAISON}` | Die Saison, z. B. *2026-2027* |
+| `{zeile.intRank}` | Platz in der Tabelle |
+| `{zeile.strBadge}` / `{zeile.strTeam}` | Wappen / Name vom Team |
+| `{zeile.intPlayed}` | Anzahl Spiele |
+| `{zeile.intGoalDifference}` | Tordifferenz, z. B. *18* |
+| `{zeile.intPoints}` | Punkte |
+| `{form}` | Die letzten 5 Spiele als Emojis: ✅ Sieg, ➖ Unentschieden, ❌ Niederlage |
+| `{foto}` | Adresse vom Spieler-Foto |
+| `{spieler.strPlayer}` | Name vom Spieler |
+| `{nummer}` | Rückennummer |
+| `{position}` | Position auf Deutsch, z. B. *Torwart* |
+| `{alter}` | Alter in Jahren |
+
+### To-do HTML
+- [ ] **HTML 11 – Tabellen-Kopf:** `<h2>🏆 Tabelle</h2>` und `<p className="saison">Saison {SAISON} · Top 5</p>`
+- [ ] **HTML 12 – Spalten-Überschriften:** sechs `<th>`: Platz, Team, Spiele, Tordiff., Punkte, Form
+- [ ] **HTML 13 – Tabellen-Zeile:** sechs `<td>`, zum Beispiel:
+  ```jsx
+  <td>{zeile.intRank}</td>
+  <td className="team-zelle"><img src={zeile.strBadge} alt="" /> {zeile.strTeam}</td>
+  <td>{zeile.intPlayed}</td>
+  ```
+  Danach noch Tordifferenz, Punkte (in `<strong>`) und `{form}`.
+- [ ] **HTML 14 – Spieler-Überschrift:** In der Detail-Box ganz unten: `<h3>👥 Spieler</h3>`
+- [ ] **HTML 15 – Spieler-Karte:** In jede Karte kommen:
+  - das Foto: `<img src={foto} alt={spieler.strPlayer} />`
+  - die Rückennummer: `<span className="nummer">{nummer}</span>`
+  - der Name in einer `<h4>`
+  - ein `<p>` mit Position und Alter, z. B. `{position} · {alter} Jahre`
+
+> 💡 Eine Tabelle hat immer diesen Aufbau: `<table>` → `<tr>` (eine **Zeile**) → `<th>` (eine **Überschrift**) oder `<td>` (eine **Zelle**). Kennst du noch aus der HTML-Aufgabe 03!
+
+### To-do CSS (unten in `style.css`, Bereich **TEIL D**)
+- [ ] **CSS 12 – Tabellen-Box:** weißer Hintergrund, dunkle Schrift, Innenabstand, runde Ecken, Schatten. Die Saison klein und grau.
+- [ ] **CSS 13 – Tabelle:** Kopfzeile (`th`) in Rasengrün mit weißer Schrift. Zellen (`td`) mit einer feinen Linie unten (`border-bottom: 1px solid #dddddd;`).
+  Beim Drüberfahren (`tbody tr:hover`) ein heller Hintergrund.
+- [ ] **CSS 14 – Markierte Zeile:** Das offene Team bekommt einen gelben Hintergrund, z. B. `#fff3b0`
+- [ ] **CSS 15 – Spieler-Karte:** heller Hintergrund (z. B. `#f2f7f3`), runde Ecken, Rahmen
+- [ ] **CSS 16 – Rückennummer:** grüner Hintergrund, weiße fette Schrift (rund ist sie schon)
+
+### Extra-Ideen zu Teil 4
+- [ ] Platz 1 soll besonders aussehen: `.tabelle tbody tr:first-child { ... }`. Oder schreib 🥇 vor den Platz!
+- [ ] Färbe die Punkte-Spalte: `.tabelle td strong { color: ...; }`
+- [ ] Zeige bei den Spielern auch die Nationalität: `{spieler.strNationality}`
+- [ ] Die Spieler-Fotos sollen beim Drüberfahren größer werden: `.spieler-karte:hover img { transform: scale(1.1); }`
+
+---
+
 ## Tipps
 - In React heißt es **`className`** statt `class`.
 - Jedes Tag muss geschlossen werden, auch `<img ... />`.

@@ -1,0 +1,576 @@
+/* =====================================================
+   TEIL A – FERTIG: Layout (bitte nicht verändern)
+   ===================================================== */
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    background-attachment: fixed;
+}
+
+.seite {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 30px 16px;
+    text-align: center;
+}
+
+/* ---------- Team: 5 Plätze in einer Reihe ---------- */
+.team-box {
+    margin: 20px 0;
+}
+
+.team {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+}
+
+.team-agent,
+.leer-platz {
+    aspect-ratio: 3 / 4;
+    box-sizing: border-box;
+}
+
+.team-agent {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    cursor: pointer;
+    animation: reinlegen 0.25s ease-out;
+}
+
+.team-agent img {
+    width: 80%;
+    height: auto;
+}
+
+.team-agent p {
+    margin: 4px 0 0;
+    font-size: 13px;
+}
+
+@keyframes reinlegen {
+    from { transform: scale(0.3); opacity: 0; }
+    to   { transform: scale(1); opacity: 1; }
+}
+
+.team-info {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 12px;
+}
+
+.team-info p {
+    margin: 0;
+}
+
+/* Box "Team bereit" hüpft */
+.team-komplett {
+    animation: huepfen 0.6s ease-out;
+}
+
+@keyframes huepfen {
+    0%   { transform: scale(0.5); }
+    60%  { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+/* ---------- Filter-Buttons ---------- */
+.filter-leiste {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin: 25px 0 20px;
+}
+
+.filter-button {
+    min-height: 44px;
+    padding: 10px 18px;
+    cursor: pointer;
+    transition: transform 0.15s;
+}
+
+.filter-button:hover {
+    transform: translateY(-2px);
+}
+
+/* ---------- Agenten-Karten im Raster ---------- */
+.karten {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 18px;
+}
+
+.karte {
+    position: relative;
+    cursor: pointer;
+    min-height: 60px;
+    padding: 12px 8px;
+    transition: transform 0.15s, opacity 0.2s;
+}
+
+.karte:hover {
+    transform: translateY(-5px) scale(1.04);
+}
+
+.karte img {
+    width: 100px;
+    height: 100px;
+    object-fit: contain;
+}
+
+.karte h3 {
+    margin: 6px 0 2px;
+    font-size: 16px;
+}
+
+.karte .rolle {
+    margin: 0;
+    font-size: 13px;
+}
+
+footer {
+    margin-top: 40px;
+}
+
+/* ---------- ⭐ Erweiterung: Info-Knopf oben rechts an der Karte ---------- */
+.info-button {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    border: none;
+    background: none;
+    font-size: 18px;
+    cursor: pointer;
+    transition: transform 0.15s;
+}
+
+.info-button:hover {
+    transform: scale(1.25);
+}
+
+/* ---------- ⭐ Erweiterung: Detail-Box über der Seite ---------- */
+.overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    background-color: rgba(0, 0, 0, 0.8);
+    animation: einblenden 0.2s ease-out;
+}
+
+.details {
+    position: relative;
+    width: 100%;
+    max-width: 520px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-sizing: border-box;
+    text-align: center;
+    line-height: 1.5;
+    /* Das Hintergrundbild und die Agenten-Farben setzt das JavaScript */
+    background-size: 90% auto, cover;
+    background-position: center top, center;
+    background-repeat: no-repeat;
+    animation: reinfliegen 0.3s ease-out;
+}
+
+@keyframes einblenden {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+@keyframes reinfliegen {
+    from { opacity: 0; transform: translateY(30px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.schliessen {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 1;
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 50%;
+    background-color: #eeeeee;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+.details .portraet {
+    width: 100%;
+    max-width: 320px;
+    height: auto;
+}
+
+.faehigkeiten {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 15px 0;
+    text-align: left;
+}
+
+.faehigkeit {
+    display: grid;
+    grid-template-columns: 48px 1fr;
+    column-gap: 12px;
+    align-items: start;
+    padding: 10px;
+}
+
+.faehigkeit img {
+    grid-row: span 3;
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+}
+
+.faehigkeit .taste,
+.faehigkeit h4,
+.faehigkeit p {
+    grid-column: 2;
+    margin: 0;
+}
+
+.faehigkeit .taste {
+    justify-self: start;
+    min-width: 24px;
+    padding: 2px 8px;
+    text-align: center;
+}
+
+.faehigkeit p {
+    font-size: 14px;
+}
+
+.link-leiste {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.link-button {
+    display: inline-block;
+    padding: 8px 14px;
+    text-decoration: none;
+    transition: transform 0.15s;
+}
+
+.link-button:hover {
+    transform: translateY(-2px);
+}
+
+.team-button {
+    width: 100%;
+    min-height: 48px;
+    margin-top: 15px;
+    cursor: pointer;
+}
+
+.team-button:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+/* ---------- ⭐⭐ Teil 4: Knöpfe unter dem Team ---------- */
+.team-knoepfe {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 14px;
+}
+
+.zufall-button,
+.leeren-button {
+    min-height: 44px;
+    padding: 8px 18px;
+    cursor: pointer;
+    transition: transform 0.15s;
+}
+
+.zufall-button:hover:not(:disabled),
+.leeren-button:hover:not(:disabled) {
+    transform: translateY(-2px);
+}
+
+.zufall-button:disabled,
+.leeren-button:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+/* ---------- ⭐⭐ Teil 4: Team-Analyse ---------- */
+.analyse,
+.map-wahl {
+    margin: 0 0 20px;
+    animation: reinfliegen 0.3s ease-out;
+}
+
+.analyse h2,
+.map-wahl h2,
+.hinweis {
+    margin: 0 0 10px;
+}
+
+.rollen-liste {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+}
+
+.rollen-zeile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 10px;
+    transition: opacity 0.2s;
+}
+
+/* ---------- ⭐⭐ Teil 4: Map-Wahl ---------- */
+.map-leiste {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+}
+
+.map-button {
+    min-height: 40px;
+    padding: 8px 14px;
+    cursor: pointer;
+    transition: transform 0.15s;
+}
+
+.map-button:hover {
+    transform: translateY(-2px);
+}
+
+.gewaehlte-map {
+    margin-top: 15px;
+    animation: reinfliegen 0.3s ease-out;
+}
+
+.map-bild {
+    display: block;
+    width: 100%;
+    max-height: 280px;
+    object-fit: cover;
+}
+
+.gewaehlte-map h3,
+.gewaehlte-map p {
+    margin: 8px 0 0;
+}
+
+/* ---------- Handy ---------- */
+@media (max-width: 600px) {
+    .team {
+        gap: 6px;
+    }
+
+    .team-agent p {
+        font-size: 10px;
+    }
+
+    .karten {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 14px;
+    }
+
+    .karte img {
+        width: 80px;
+        height: 80px;
+    }
+
+    .rollen-liste {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+
+/* =====================================================
+   TEIL B – ✏️ DEIN CSS
+   ===================================================== */
+
+/* CSS 1 – Seite: dunkler Hintergrund, helle Schrift, Schriftart */
+body {
+
+}
+
+/* CSS 2 – Überschrift und Untertitel */
+h1 {
+
+}
+
+.untertitel {
+
+}
+
+/* CSS 3 – Team-Box und Agenten im Team */
+.team-box {
+
+}
+
+.team-agent {
+
+}
+
+/* CSS 4 – Leere Plätze im Team */
+.leer-platz {
+
+}
+
+/* CSS 5 – Filter-Buttons (der aktive extra) */
+.filter-button {
+
+}
+
+.filter-button.aktiv {
+
+}
+
+/* CSS 6 – Agenten-Karte */
+.karte {
+
+}
+
+/* CSS 7 – Rollen-Farben (border-color) */
+.duellant {
+
+}
+
+.initiator {
+
+}
+
+.waechter {
+
+}
+
+.taktiker {
+
+}
+
+/* CSS 8 – Agent, der schon im Team ist */
+.im-team {
+
+}
+
+/* CSS 9 – "Team bereit"-Box und Fußzeile */
+.team-komplett {
+
+}
+
+footer {
+
+}
+
+
+/* =====================================================
+   TEIL C – ⭐ ERWEITERUNG: DEIN CSS
+   ===================================================== */
+
+/* CSS 10 – Info-Box (Hintergrund kommt vom JavaScript), Name und Beschreibung */
+.details {
+
+}
+
+.details h2 {
+
+}
+
+.beschreibung {
+
+}
+
+/* CSS 11 – Fähigkeiten und Tasten */
+.faehigkeit {
+
+}
+
+.taste {
+
+}
+
+/* CSS 12 – Link-Buttons */
+.link-button {
+
+}
+
+.link-button:hover {
+
+}
+
+/* CSS 13 – Button "Ins Team" */
+.team-button {
+
+}
+
+
+/* =====================================================
+   TEIL D – ⭐⭐ TEIL 4: DEIN CSS
+   ===================================================== */
+
+/* CSS 14 – Knöpfe "Zufalls-Team" und "Team leeren" */
+.zufall-button {
+
+}
+
+.leeren-button {
+
+}
+
+/* CSS 15 – Analyse-Box und Hinweis */
+.analyse {
+
+}
+
+.hinweis {
+
+}
+
+/* CSS 16 – Rollen in der Analyse (fehlende Rollen haben die Klasse "fehlt") */
+.rollen-zeile {
+
+}
+
+.rollen-zeile.fehlt {
+
+}
+
+/* CSS 17 – Map-Wahl und Map-Buttons (der aktive extra) */
+.map-wahl {
+
+}
+
+.map-button {
+
+}
+
+.map-button.aktiv {
+
+}
+
+/* CSS 18 – Bild der gewählten Map */
+.map-bild {
+
+}
