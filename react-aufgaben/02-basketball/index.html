@@ -105,8 +105,7 @@
             const [spiel, setSpiel] = useState(null);
             useEffect(() => {
                 setSpiel(null);
-                fetch("https://www.thesportsdb.com/api/v1/json/123/eventslast.php?id=" + team.idTeam)
-                    .then((antwort) => antwort.json())
+                holeDaten("https://www.thesportsdb.com/api/v1/json/123/eventslast.php?id=" + team.idTeam)
                     .then((daten) => setSpiel(daten.results ? daten.results[0] : null));
             }, [team.idTeam]);
 

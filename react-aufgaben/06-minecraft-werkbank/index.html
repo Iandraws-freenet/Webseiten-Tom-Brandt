@@ -7,9 +7,9 @@
     <link rel="stylesheet" href="style.css">
 
     <!-- React und Babel aus dem Internet laden (nicht verändern) -->
-    <script src="https://unpkg.com/react@18.3.1/umd/react.development.js"></script>
-    <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js"></script>
-    <script src="https://unpkg.com/@babel/standalone@7.26.4/babel.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/react@18.3.1/umd/react.development.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/react-dom@18.3.1/umd/react-dom.development.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@babel/standalone@7.26.4/babel.min.js"></script>
 </head>
 <body>
 
@@ -19,10 +19,10 @@
 
         const { useState, useEffect } = React;
 
-        const ITEMS_URL = "https://raw.githubusercontent.com/PrismarineJS/minecraft-data/master/data/pc/1.20/items.json";
-        const REZEPTE_URL = "https://raw.githubusercontent.com/PrismarineJS/minecraft-data/master/data/pc/1.20/recipes.json";
-        const TEXTUR_URL = "https://raw.githubusercontent.com/PrismarineJS/minecraft-assets/master/data/1.20.2/items_textures.json";
-        const BILD_URL = "https://raw.githubusercontent.com/PrismarineJS/minecraft-assets/master/data/1.20.2/";
+        const ITEMS_URL = "https://cdn.jsdelivr.net/gh/PrismarineJS/minecraft-data@master/data/pc/1.20/items.json";
+        const REZEPTE_URL = "https://cdn.jsdelivr.net/gh/PrismarineJS/minecraft-data@master/data/pc/1.20/recipes.json";
+        const TEXTUR_URL = "https://cdn.jsdelivr.net/gh/PrismarineJS/minecraft-assets@master/data/1.20.2/items_textures.json";
+        const BILD_URL = "https://cdn.jsdelivr.net/gh/PrismarineJS/minecraft-assets@master/data/1.20.2/";
 
         const INVENTAR_GROESSE = 27;   // 3 Reihen mit je 9 Plätzen
         const HOTBAR_GROESSE = 9;      // 1 Reihe ganz unten
