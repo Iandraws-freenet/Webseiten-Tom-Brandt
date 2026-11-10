@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VCT Champions 2026</title>
+    <link rel="stylesheet" href="style.css">
+
+    <!-- React und Babel aus dem Internet laden (nicht verändern) -->
+    <script src="https://cdn.jsdelivr.net/npm/react@18.3.1/umd/react.development.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/react-dom@18.3.1/umd/react-dom.development.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@babel/standalone@7.26.4/babel.min.js"></script>
+
+    <!-- Gespeicherte Turnier-Daten (erzeugt mit: node daten-aktualisieren.js vct) -->
+    <script src="daten.js"></script>
+</head>
+<body>
+
+    <div id="root"></div>
+
+    <script type="text/babel">
+
+        const { useState, useEffect } = React;
+
+        // Daten von vlr.gg über eine freie API (nur 30 Anfragen pro Minute, deshalb gibt es daten.js)
+        const VLR_API = "https://vlr.orlandomm.net/api/v1/";
+        const EVENT_URL = VLR_API + "events/2766";   // Valorant Champions 2026
+        const TEAM_URL = VLR_API + "teams/";
+
+        // Daten holen: zuerst aus daten.js (gespeichert), sonst aus dem Zwischenspeicher, sonst aus dem Internet.
+        function holeDaten(adresse) {
+            if (window.GESPEICHERTE_DATEN && window.GESPEICHERTE_DATEN[adresse]) {
+                return Promise.resolve(window.GESPEICHERTE_DATEN[adresse]);
+            }
+            try {
+                const gespeichert = sessionStorage.getItem(adresse);
+                if (gespeichert) return Promise.resolve(JSON.parse(gespeichert));
+            } catch (e) { /* ohne Zwischenspeicher weiterarbeiten */ }
+            return fetch(adresse)
+                .then((antwort) => {
+                    if (!antwort.ok) throw new Error("HTTP " + antwort.status);
+                    return antwort.json();
+                })
+                .then((daten) => {
+                    try { sessionStorage.setItem(adresse, JSON.stringify(daten)); } catch (e) { }
+                    return daten;
+                });
+        }
+
+        // "1st" → "1. Platz", "5th–6th" → "5.–6. Platz"
+        function platzText(place) {
+            return place.replace(/(\d+)(st|nd|rd|th)/g, "$1.") + " Platz";
+        }
+
+        const MEDAILLEN = { "1st": "🥇", "2nd": "🥈", "3rd": "🥉" };
+        const PLATZ_KLASSE = { "1st": "gold", "2nd": "silber", "3rd": "bronze" };
+
+        // Ländercode (z. B. "br") → Flagge 🇧🇷
+        function flagge(code) {
+            if (!code || code.length !== 2 || code === "un" || code === "eu") return "🌍";
+            return String.fromCodePoint(...code.toUpperCase().split("").map((b) => 127397 + b.charCodeAt(0)));
+        }
+
+        const RUNDEN_DEUTSCH = {
+            "Upper Quarterfinals": "Viertelfinale",
+            "Upper Semifinals": "Halbfinale",
+            "Upper Final": "Upper Final",
+            "Lower Round 1": "Runde 1",
+            "Lower Round 2": "Runde 2",
+            "Lower Round 3": "Runde 3",
+            "Lower Final": "Lower Final",
+            "Grand Final": "Grand Final"
+        };
+
+
+        // =====================================================
+        // Eine Karte für EIN Team
+        // =====================================================
+        function TeamKarte({ team, onKlick }) {
+            const logo = team.logo;
+            const platz = platzText(team.place);
+            const medaille = MEDAILLEN[team.place] || "";
+            const preisgeld = team.prize;
+
+            return (
+                <div className={"karte " + (PLATZ_KLASSE[team.place] || "")} onClick={onKlick}>
+
+                    {/* ✏️ DEIN HTML 3: Logo (img) mit src={logo}, Name (h3) mit {team.name},
+                                       Platz (p className="platz") mit {medaille} {platz}
+                                       und Preisgeld (p className="preisgeld") mit {preisgeld} */}
+
+                </div>
+            );
+        }
+
+
+        // =====================================================
+        // ⭐ ERWEITERUNG: Die Team-Box (Klick auf ein Team)
+        // =====================================================
+        function TeamDetails({ team, details, matches, onSchliessen }) {
+            const logo = team.logo;
+            const kuerzel = (details && details.info.tag) || team.name.slice(0, 3).toUpperCase();
+            const platz = platzText(team.place);
+            const medaille = MEDAILLEN[team.place] || "";
+            const preisgeld = team.prize;
+            const vlrLink = team.url;
+
+            // Fertig: Spieler aus dem Turnier, Foto und echter Name (wenn vorhanden) aus den Team-Details
+            const spielerListe = team.roster.map((r) => {
+                const mehr = details ? details.players.find((p) => p.id === r.id) : null;
+                const hatFoto = mehr && mehr.img && !mehr.img.includes("/ph/");
+                return {
+                    id: r.id,
+                    name: r.name,
+                    echterName: mehr ? mehr.name : "",
+                    flagge: flagge(r.flag),
+                    foto: hatFoto ? mehr.img : null
+                };
+            });
+
+            return (
+                <div className="overlay" onClick={onSchliessen}>
+                    <div className={"details " + (PLATZ_KLASSE[team.place] || "")} onClick={(e) => e.stopPropagation()}>
+                        <button className="schliessen" onClick={onSchliessen}>✕</button>
+
+                        {/* ✏️ DEIN HTML 6: Logo (img className="team-logo") mit src={logo}, Name (h2),
+                                           Kürzel (p className="kuerzel") mit {kuerzel}
+                                           und ein p mit {medaille} {platz} · {preisgeld} */}
+
+
+                        <div className="spieler-liste">
+                            {spielerListe.map((spieler) => (
+                                <div key={spieler.id} className="spieler-karte">
+                                    {spieler.foto ? (
+                                        <>
+                                            {/* ✏️ DEIN HTML 7: Foto (img) mit src={spieler.foto} */}
+
+                                        </>
+                                    ) : (
+                                        <span className="kein-foto">🎮</span>
+                                    )}
+                                    {/* ✏️ DEIN HTML 7: Spielername (h4) mit {spieler.name}
+                                                       und ein p mit {spieler.flagge} {spieler.echterName} */}
+
+                                </div>
+                            ))}
+                        </div>
+
+                        <div className="team-matches">
+                            {matches.map((m) => (
+                                <div key={m.id} className={m.gewonnen ? "team-match gewonnen" : "team-match verloren"}>
+                                    {/* ✏️ DEIN HTML 8: Runde (span className="runde") mit {m.runde},
+                                                       Ergebnis (strong) mit {m.ergebnis}
+                                                       und ein span mit "gegen {m.gegner}" */}
+
+                                </div>
+                            ))}
+                        </div>
+
+                        <div className="link-leiste">
+                            {/* ✏️ DEIN HTML 9: ein Link (a className="link-button" target="_blank")
+                                               "📊 Team auf vlr.gg" mit {vlrLink} */}
+
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+
+        // =====================================================
+        // ⭐⭐ TEIL 4: Ein Match im Turnierbaum
+        // =====================================================
+        function BracketMatch({ match, lieblingsteam }) {
+            const istFavorit = match.teams.some((t) => t.id === lieblingsteam);
+
+            return (
+                <div className={istFavorit ? "match favorit" : "match"}>
+                    {match.teams.map((t) => (
+                        <div key={t.id} className={t.winner ? "match-team gewinner" : "match-team"}>
+                            {/* ✏️ DEIN HTML 12: Logo (img) mit src={t.logo}, Name (span) mit {t.name}
+                                                und die Punkte (strong) mit {t.score} */}
+
+                        </div>
+                    ))}
+                </div>
+            );
+        }
+
+
+        // =====================================================
+        // Die App (JavaScript ist fertig)
+        // =====================================================
+        function App() {
+            const [event, setEvent] = useState(null);
+            const [teamDetails, setTeamDetails] = useState({});
+            const [fehler, setFehler] = useState(false);
+            const [ausgewaehlt, setAusgewaehlt] = useState(null);       // ⭐ angeklicktes Team
+            const [lieblingsteam, setLieblingsteam] = useState("");      // ⭐⭐ Teil 4
+
+            useEffect(() => {
+                holeDaten(EVENT_URL)
+                    .then((antwort) => {
+                        setEvent(antwort.data);
+                        // ⭐ Team-Details (Fotos der Spieler) für alle Teams laden
+                        return Promise.all(antwort.data.teams.map((t) =>
+                            holeDaten(TEAM_URL + t.id).then((d) => [t.id, d.data]).catch(() => [t.id, null])
+                        ));
+                    })
+                    .then((liste) => setTeamDetails(Object.fromEntries(liste)))
+                    .catch(() => setFehler(true));
+            }, []);
+
+            if (fehler) return <p className="laden">😢 Das Turnier konnte nicht geladen werden. Lade die Seite neu (F5).</p>;
+            if (!event) return <p className="laden">Turnier wird geladen ... 🏆</p>;
+
+            // Fertig: Teams in der Reihenfolge der Platzierung, mit Platz und Preisgeld
+            const teams = event.prizes.map((p) => {
+                const team = event.teams.find((t) => t.id === p.team.id) || { roster: [], url: "" };
+                return { ...team, ...p.team, place: p.place, prize: p.prize };
+            });
+            const weltmeister = teams[0];
+
+            // Fertig: alle Matches eines Teams aus dem Turnierbaum
+            function matchesVon(teamId) {
+                const liste = [];
+                event.bracket.forEach((runde) => runde.matches.forEach((m) => {
+                    const eigenes = m.teams.find((t) => t.id === teamId);
+                    if (!eigenes) return;
+                    const gegner = m.teams.find((t) => t.id !== teamId);
+                    liste.push({
+                        id: m.id,
+                        runde: RUNDEN_DEUTSCH[runde.round] || runde.round,
+                        gegner: gegner.name,
+                        ergebnis: eigenes.score + " : " + gegner.score,
+                        gewonnen: eigenes.winner
+                    });
+                }));
+                return liste;
+            }
+
+            // ⭐⭐ TEIL 4 (fertig): Turnierbaum in drei Abschnitte aufteilen
+            const abschnitte = [
+                { titel: "⬆️ Upper Bracket", runden: event.bracket.filter((r) => r.round.startsWith("Upper")) },
+                { titel: "⬇️ Lower Bracket", runden: event.bracket.filter((r) => r.round.startsWith("Lower")) },
+                { titel: "🏆 Grand Final", runden: event.bracket.filter((r) => r.round === "Grand Final") }
+            ];
+
+            // ⭐⭐ TEIL 4 (fertig): Bilanz vom Lieblingsteam
+            const favoritMatches = lieblingsteam ? matchesVon(lieblingsteam) : [];
+            const siege = favoritMatches.filter((m) => m.gewonnen).length;
+            const niederlagen = favoritMatches.length - siege;
+            const favorit = teams.find((t) => t.id === lieblingsteam);
+            const lieblingsName = favorit ? favorit.name : "";
+
+            return (
+                <div className="seite">
+
+                    <header>
+                        {/* ✏️ DEIN HTML 1: Überschrift (h1) und Untertitel (p className="untertitel") */}
+
+                    </header>
+
+                    <section className="event-box">
+                        {/* ✏️ DEIN HTML 2: Turnier-Logo (img className="event-logo") mit src={event.img}
+                                           und drei p: 📍 {event.location}, 📅 {event.dates} und 💰 {event.prizepool} */}
+
+                    </section>
+
+                    <section className="weltmeister">
+                        {/* ✏️ DEIN HTML 4: Logo (img) mit src={weltmeister.logo}
+                                           und eine h2 mit "👑 Weltmeister: {weltmeister.name}" */}
+
+                    </section>
+
+                    <div className="karten">
+                        {teams.map((team) => (
+                            <TeamKarte key={team.id} team={team} onKlick={() => setAusgewaehlt(team)} />
+                        ))}
+                    </div>
+
+                    {/* ===================== ⭐⭐ TEIL 4: Turnierbaum ===================== */}
+                    <section className="turnierbaum">
+                        {/* ✏️ DEIN HTML 10: Überschrift (h2) "🏟️ Turnierbaum" */}
+
+
+                        <div className="lieblingsteam">
+                            <label>
+                                {/* ✏️ DEIN HTML 13: Text "⭐ Mein Lieblingsteam:" */}
+
+                                <select value={lieblingsteam} onChange={(e) => setLieblingsteam(e.target.value)}>
+                                    <option value="">– keins –</option>
+                                    {teams.map((t) => <option key={t.id} value={t.id}>{t.name}</option>)}
+                                </select>
+                            </label>
+                            {favorit && (
+                                <>
+                                    {/* ✏️ DEIN HTML 13: ein p (className="bilanz") mit
+                                                        "{lieblingsName}: {siege} Siege, {niederlagen} Niederlagen" */}
+
+                                </>
+                            )}
+                        </div>
+
+                        {abschnitte.map((abschnitt) => (
+                            <div key={abschnitt.titel} className="abschnitt">
+                                {/* ✏️ DEIN HTML 11: Überschrift (h3) mit {abschnitt.titel} */}
+
+                                <div className="runden">
+                                    {abschnitt.runden.map((runde) => (
+                                        <div key={runde.round} className="runde-spalte">
+                                            {/* ✏️ DEIN HTML 11: Name der Runde (h4) mit {RUNDEN_DEUTSCH[runde.round]} */}
+
+                                            {runde.matches.map((m) => (
+                                                <BracketMatch key={m.id} match={m} lieblingsteam={lieblingsteam} />
+                                            ))}
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        ))}
+                    </section>
+
+                    {ausgewaehlt && (
+                        <TeamDetails
+                            team={ausgewaehlt}
+                            details={teamDetails[ausgewaehlt.id]}
+                            matches={matchesVon(ausgewaehlt.id)}
+                            onSchliessen={() => setAusgewaehlt(null)}
+                        />
+                    )}
+
+                    <footer>
+                        {/* ✏️ DEIN HTML 5: "Daten: vlr.gg" und "Gebaut von DEIN NAME" (je ein p) */}
+
+                    </footer>
+
+                </div>
+            );
+        }
+
+        ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+
+    </script>
+</body>
+</html>
