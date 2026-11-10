@@ -20,7 +20,7 @@
         const { useState, useEffect } = React;
 
         const API_URL = "https://www.thesportsdb.com/api/v1/json/123/search_all_teams.php?l=NBA";
-        const SPURS_API_URL = "https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t=San%20Antonio%20Spurs";
+        const SPURS_URL = "https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t=San_Antonio_Spurs";
 
         const SORTIERUNGEN = [
             { name: "A–Z", wert: "name" },
@@ -32,19 +32,119 @@
         // =====================================================
         // Eine Karte für EIN Team
         // =====================================================
-        function TeamKarte({ team, istFavorit, onFavorit }) {
+        function TeamKarte({ team, istFavorit, onFavorit, onKlick }) {
             return (
-                <div className={istFavorit ? "karte favorit" : "karte"}>
+                <div className={istFavorit ? "karte favorit" : "karte"} onClick={onKlick}>
 
+                    {/* ✅ HTML 3: Logo (img), Name (h2), Abkürzung (span className="kurz"),
+                                   Gründungsjahr (p) und Halle (p) */}
                     <img src={team.strBadge} alt={team.strTeam} />
                     <h2>{team.strTeam}</h2>
                     <span className="kurz">{team.strTeamShort}</span>
-                    <p>Seit {team.intFormedYear}</p>
+                    <p>seit {team.intFormedYear}</p>
                     <p>{team.strStadium}</p>
-
-                    <button className="herz" onClick={onFavorit}>
+                    <button
+                        className="herz"
+                        onClick={(e) => {
+                            e.stopPropagation();   // Herz-Klick öffnet NICHT die Details
+                            onFavorit();
+                        }}
+                    >
                         {istFavorit ? "❤️" : "🤍"}
                     </button>
+                </div>
+            );
+        }
+
+
+        // =====================================================
+        // ⭐ ERWEITERUNG: Die Detail-Box, wenn man ein Team anklickt
+        // =====================================================
+        function Details({ team, onSchliessen }) {
+
+            // Fertig: Text, Webseite, Links
+            const text = team.strDescriptionDE || team.strDescriptionEN || "";
+            const beschreibung = text.slice(0, 350) + " ...";
+            const webseite = "https://" + team.strWebsite;
+            const wikipedia = "https://de.wikipedia.org/wiki/Spezial:Suche?search=" + encodeURIComponent(team.strTeam);
+            const farben = [team.strColour1, team.strColour2, team.strColour3].filter(Boolean);
+            const links = [
+                { name: "📸 Instagram", adresse: team.strInstagram },
+                { name: "👍 Facebook", adresse: team.strFacebook },
+                { name: "🐦 X / Twitter", adresse: team.strTwitter },
+                { name: "▶️ YouTube", adresse: team.strYoutube }
+            ]
+                .filter((link) => link.adresse)
+                .map((link) => ({ ...link, adresse: "https://" + link.adresse }));
+
+            // Fertig: das letzte Spiel vom Team laden
+            const [spiel, setSpiel] = useState(null);
+            useEffect(() => {
+                setSpiel(null);
+                fetch("https://www.thesportsdb.com/api/v1/json/123/eventslast.php?id=" + team.idTeam)
+                    .then((antwort) => antwort.json())
+                    .then((daten) => setSpiel(daten.results ? daten.results[0] : null));
+            }, [team.idTeam]);
+
+            return (
+                <div className="overlay" onClick={onSchliessen}>
+                    <div className="details" style={{ backgroundColor: team.strColour1 }}  onClick={(e) => e.stopPropagation()}>
+                        <button className="schliessen" onClick={onSchliessen}>✕</button>
+
+                        {team.strBanner && (
+                            <>
+                                {/* ✏️ DEIN HTML 5: Banner-Bild (img className="banner") mit src={team.strBanner} */}
+                                <img className="banner" src={team.strBanner} alt={"Banner"} />
+                            </>
+                        )}
+                            <div className="esttaetischeBox">
+                        {/* ✏️ DEIN HTML 6: Name (h2), Ort, Halle, Gegründet (je ein p mit strong)
+                                           und die Beschreibung (p className="beschreibung") */}
+                            <h2>{team.strTeam}</h2>
+                            
+                            <p className="Klassendetails"><strong>Halle:</strong> {team.strStadiumLocation}</p>
+
+                            <p className="Klassendetails"><strong>Gegründet:</strong> {team.intFormedYear}</p>
+                            <p className="beschreibung">{beschreibung}</p>
+
+                        {/* ✏️ DEIN HTML 7: ein p "Team-Farben:" (die Farb-Punkte sind schon da) */}
+
+                        <div className="farben">
+                            {farben.map((farbe) => (
+                                <span key={farbe} className="farbe" style={{ backgroundColor: farbe }}></span>
+                            ))}
+                        </div>
+
+                        {spiel && (
+                            <div className="spiel">
+                                {/* ✏️ DEIN HTML 8a: Überschrift (h3) "🏀 Letztes Spiel" und ein p mit dem Datum */}
+                                <h3 className="Klassendetails">🏀 Letztes Spiel</h3> <p className="Klassendetails">{spiel.dateEvent}</p>
+
+                                <div className="spielstand">
+                                    {/* ✏️ DEIN HTML 8b: Heim-Logo (img), Heim-Team (p),
+                                                        Ergebnis (span className="punkte"), Gast-Team (p), Gast-Logo (img) */}
+                                       <img src={spiel.strHomeTeamBadge} alt={spiel.strHomeTeam} />
+                                    <span className="punkte Klassendetails">{spiel.intHomeScore} : {spiel.intAwayScore}</span>
+                                    <img src={spiel.strAwayTeamBadge} alt={spiel.strAwayTeam} />
+
+                                                        
+                                    
+                                </div>
+                            </div>
+                        )}
+
+                        <div className="link-leiste">
+                            {/* ✏️ DEIN HTML 9: Link zur Webseite (a className="link-button") mit {webseite} */}
+                            <a className="link-button" href={webseite} target="_blank">{webseite}</a>
+                            
+
+                            
+
+                            {/* ✏️ DEIN HTML 9: Link zu Wikipedia (a className="link-button") mit {wikipedia} */}
+                                <a className="link-button" href={wikipedia} target="_blank">Wikipedia Information</a>
+                              </div> 
+                        </div>
+                    </div>
                 </div>
             );
         }
@@ -61,32 +161,18 @@
             const [laedt, setLaedt] = useState(true);
             const [ladeFehler, setLadeFehler] = useState("");
 
+            const [ausgewaehlt, setAusgewaehlt] = useState(null);   // ⭐ angeklicktes Team
+
             useEffect(() => {
-                setLaedt(true);
-                setLadeFehler("");
-                Promise.all([API_URL, SPURS_API_URL].map((url) =>
-                    fetch(url).then((antwort) => {
-                        if (!antwort.ok) {
-                            throw new Error(`HTTP ${antwort.status}`);
-                        }
-                        return antwort.json();
-                    })
-                ))
-                    .then(([nbaDaten, spursDaten]) => {
-                        const alleTeams = nbaDaten.teams || [];
-                        (spursDaten.teams || []).forEach((team) => {
-                            if (!alleTeams.some((nbaTeam) => nbaTeam.idTeam === team.idTeam)) {
-                                alleTeams.push(team);
-                            }
-                        });
-                        setTeams(alleTeams);
-                    })
-                    .catch((fehler) => {
-                        console.error("NBA-Teams konnten nicht geladen werden:", fehler);
-                        const details = fehler instanceof Error ? ` (${fehler.message})` : "";
-                        setLadeFehler(`Die Teams konnten nicht geladen werden${details}. Bitte versuche es später erneut.`);
-                    })
-                    .finally(() => setLaedt(false));
+                // Der kostenlose Zugang liefert nur 10 Teams. Die Spurs laden wir extra dazu!
+                Promise.all([
+                    fetch(API_URL).then((antwort) => antwort.json()),
+                    fetch(SPURS_URL).then((antwort) => antwort.json())
+                ]).then(([daten, spurs]) => {
+                    const alle = [...(daten.teams || []), ...(spurs.teams || [])];
+                    const ohneDoppelte = alle.filter((team, i) => alle.findIndex((t) => t.idTeam === team.idTeam) === i);
+                    setTeams(ohneDoppelte.filter((team) => team.strSport === "Basketball"));
+                });
             }, []);
 
             function favoritUmschalten(id) {
@@ -112,6 +198,7 @@
                 <div className="seite">
 
                     <header>
+                        {/* ✅ HTML 1: Überschrift (h1) und Untertitel (p className="untertitel") */}
                         <h1>🏀 NBA-Teams</h1>
                         <p className="untertitel">Go Spurs Go! Finde dein Lieblings-Team!</p>
                     </header>
@@ -135,27 +222,28 @@
                         ))}
                     </div>
 
-                    <p className="zaehler">
-                        {anzahlTeams} Teams · {anzahlFavoriten} Favoriten ❤️
-                    </p>
+                    {/* ✅ HTML 2: Zähler (p className="zaehler") */}
+                    <p className="zaehler">{anzahlTeams} Teams · {anzahlFavoriten} Favoriten ❤️</p>
+                    <div className="karten">
+                        {gefilterteTeams.map((team) => (
+                            <TeamKarte
+                                key={team.idTeam}
+                                team={team}
+                                istFavorit={favoriten.includes(team.idTeam)}
+                                onFavorit={() => favoritUmschalten(team.idTeam)}
+                                onKlick={() => setAusgewaehlt(team)}
+                            />
+                        ))}
+                    </div>
 
-                    {laedt ? (
-                        <p role="status">NBA-Teams werden geladen ...</p>
-                    ) : ladeFehler ? (
-                        <p role="alert">{ladeFehler}</p>
-                    ) : gefilterteTeams.length > 0 ? (
-                        <div className="karten">
-                            {gefilterteTeams.map((team) => (
-                                <TeamKarte
-                                    key={team.idTeam}
-                                    team={team}
-                                    istFavorit={favoriten.includes(team.idTeam)}
-                                    onFavorit={() => favoritUmschalten(team.idTeam)}
-                                />
-                            ))}
-                        </div>
-                    ) : (
+                    {ausgewaehlt && (
+                        <Details team={ausgewaehlt} onSchliessen={() => setAusgewaehlt(null)} />
+                    )}
+
+                    {teams.length > 0 && anzahlTeams === 0 && (
                         <div className="nichts-gefunden">
+
+                            {/* ✅ HTML 4: ein großes Emoji und der Text "Kein Team gefunden" */}
                             <p className="emoji">😢</p>
                             <p>Kein Team gefunden</p>
                         </div>
