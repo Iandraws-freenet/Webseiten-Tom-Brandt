@@ -360,31 +360,40 @@ footer {
 
 /* CSS 1 – Seite: dunkler Hintergrund, helle Schrift, Schriftart */
 body {
-
+background-color: rgb(99, 96, 83);
+color: white;
+font-family: Arial, Helvetica, sans-serif;
 }
 
 /* CSS 2 – Überschrift und Untertitel */
 h1 {
-
-}
+text-transform: uppercase;
+color: #ff4655;
+} 
 
 .untertitel {
-
+font-size: 15px;
+color: rgb(155, 155, 155);
 }
 
 /* CSS 3 – Turnier-Infos */
 .event-box {
-
+background-color: #1f2731;
+border-bottom: 3px solid #ff4655;
 }
 
 /* CSS 4 – Weltmeister-Box */
 .weltmeister {
-
+background: linear-gradient(90deg, #b8860b, #ffd700, #b8860b);
+color: #1f2731;
+padding: 20px;
+text-shadow: 0 0 3px #030303;
 }
 
 /* CSS 5 – Team-Karte */
 .karte {
-
+background-color: #1f2731 ;
+border: 3px solid #3a4553;
 }
 
 /* CSS 6 – Name und Preisgeld in der Karte */
@@ -393,30 +402,33 @@ h1 {
 }
 
 .preisgeld {
-
+color: #4ecb71;
+font-weight: bold;
 }
 
 /* CSS 7 – Platz-Farben (border-color) */
 .gold {
-
+border-color: gold;
 }
 
 .silber {
-
+border-color: #c0c0c0;
 }
 
 .bronze {
-
+border-color: #cd7f32;
 }
 
 /* CSS 8 – Platz in der Karte */
 .platz {
-
+font-weight: bold;
+font-size: 20px;
 }
 
 /* CSS 9 – Fußzeile */
 footer {
-
+color: grey;
+font-weight: 700;
 }
 
 
@@ -426,16 +438,19 @@ footer {
 
 /* CSS 10 – Team-Box und Kürzel */
 .details {
-
+background-color: #1f2731;
+border: 4px solid #3a4553;
 }
 
 .kuerzel {
-
+color: gray;
 }
 
 /* CSS 11 – Spieler-Karte und rundes Foto */
 .spieler-karte {
-
+background-color: #0f1923;
+border: 2px solid #3a4553;
+border-radius: 10px;
 }
 
 .spieler-karte img,
@@ -445,24 +460,26 @@ footer {
 
 /* CSS 12 – Matches: gewonnen und verloren */
 .team-match {
-
+background-color: rgb(5, 5, 5);
 }
 
 .team-match.gewonnen {
-
+border-left: 5px solid #4ecb71;
 }
 
 .team-match.verloren {
-
+border-left: 5px solid #ff4655;
 }
 
 /* CSS 13 – Link-Button */
 .link-button {
-
+background-color: #ff4655;
+color: white;
+font-weight: bold;
 }
 
 .link-button:hover {
-
+background-color: #9e2630;
 }
 
 
@@ -472,37 +489,44 @@ footer {
 
 /* CSS 14 – Turnierbaum-Box und Auswahl vom Lieblingsteam */
 .turnierbaum {
-
+background-color: #1f2731;
+padding: 20px;
 }
 
 .lieblingsteam select {
-
+background-color: #0f1923;
+color: white;
+border: 2px solid #3a4553
 }
 
 /* CSS 15 – Überschriften der Abschnitte und Runden */
 .abschnitt h3 {
-
+color: #ff4655;
+text-transform: uppercase;
 }
 
 .runde-spalte h4 {
-
+color: gray;
 }
 
 /* CSS 16 – Ein Match-Kasten */
 .match {
-
+background-color: #0f1923;
+border: 1px solid #3a4553;
 }
 
 /* CSS 17 – Der Gewinner eines Matches */
 .match-team.gewinner {
-
+background-color: rgba(78, 203, 113, 0.15);
+strong { color: #4ecb71; }
 }
 
 /* CSS 18 – Matches vom Lieblingsteam und Bilanz */
 .match.favorit {
-
+box-shadow: 0 0 12px #ffd700;
 }
 
 .bilanz {
-
+font-weight: bold;
+color: #ffd700;
 }

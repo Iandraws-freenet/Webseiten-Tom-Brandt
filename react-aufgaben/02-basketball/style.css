@@ -1,5 +1,5 @@
 /* =====================================================
-   TEIL A – FERTIG: Layout (bitte nicht verändern)
+   TEIL A â€“ FERTIG: Layout (bitte nicht verÃ¤ndern)
    ===================================================== */
 
 body {
@@ -51,7 +51,7 @@ body {
     display: inline-block;
 }
 
-/* Herz-Button: rund und mit Hüpf-Effekt */
+/* Herz-Button: rund und mit HÃ¼pf-Effekt */
 .herz {
     margin-top: auto;
     width: 48px;
@@ -76,12 +76,12 @@ body {
     max-width: 400px;
 }
 
-/* Karte ist anklickbar (⭐ Erweiterung) */
+/* Karte ist anklickbar (â­ Erweiterung) */
 .karte {
     cursor: pointer;
 }
 
-/* ---------- ⭐ Erweiterung: Detail-Box über der Seite ---------- */
+/* ---------- â­ Erweiterung: Detail-Box Ã¼ber der Seite ---------- */
 .overlay {
     position: fixed;
     inset: 0;
@@ -191,7 +191,7 @@ body {
     object-fit: contain;
 }
 
-/* ---------- ⭐⭐ Teil 4: Team-Vergleich ---------- */
+/* ---------- â­â­ Teil 4: Team-Vergleich ---------- */
 .karte {
     position: relative;
 }
@@ -317,15 +317,15 @@ body {
 
 
 /* =====================================================
-   TEIL B – ✏️ DEIN CSS
+   TEIL B â€“ âœï¸ DEIN CSS
    ===================================================== */
 
-/* CSS 1 – Seite */
+/* CSS 1 â€“ Seite */
 body {
 background: linear-gradient(180deg,  #474747, #202020)
 }
 
-/* CSS 2 – Überschrift, Untertitel, Zähler */
+/* CSS 2 â€“ Ãœberschrift, Untertitel, ZÃ¤hler */
 h1 {
 text-transform: uppercase;
 color: rgb(255, 255, 255);;
@@ -341,7 +341,7 @@ text-transform: uppercase;
 color: rgb(243, 230, 230);
 }
 
-/* CSS 3 – Suchfeld */
+/* CSS 3 â€“ Suchfeld */
 .suche {
   width: 100%;
     max-width: 400px;
@@ -352,7 +352,7 @@ color: rgb(243, 230, 230);
     border-color: #ffe4e4;
 }
 
-/* CSS 4 – Sortier-Buttons */
+/* CSS 4 â€“ Sortier-Buttons */
 .sortier-button {
 background-color: rgb(253, 254, 255);    
 
@@ -363,7 +363,7 @@ background-color: silver;
 color: black;
 }
 
-/* CSS 5 – Karte */
+/* CSS 5 â€“ Karte */
 .karte {
    color: white;
    display: flex;
@@ -393,7 +393,7 @@ color: black;
 }
 
 
-/* CSS 6 – Logo und Text in der Karte */
+/* CSS 6 â€“ Logo und Text in der Karte */
 .karte img {
 width: 60%;
 }
@@ -410,7 +410,7 @@ width: 60%;
     color: #8a8d8f;
 }
 
-/* CSS 7 – Abkürzung */
+/* CSS 7 â€“ AbkÃ¼rzung */
 .kurz {
     background-color: #c4ced4;
     color: #000000;
@@ -420,14 +420,14 @@ width: 60%;
     margin-bottom: 6px;
 }
 
-/* CSS 8 – Herz-Button */
+/* CSS 8 â€“ Herz-Button */
 .herz {
     background-color: #2b2b2b;
     font-size: 22px;
     margin-top: 10px;
 }
 
-/* CSS 9 – Nichts gefunden */
+/* CSS 9 â€“ Nichts gefunden */
 .nichts-gefunden {
     background-color: #1a1a1a;
     padding: 25px;
@@ -443,10 +443,10 @@ width: 60%;
 
 
 /* =====================================================
-   TEIL C – ⭐ ERWEITERUNG: DEIN CSS
+   TEIL C â€“ â­ ERWEITERUNG: DEIN CSS
    ===================================================== */
 
-/* CSS 10 – Detail-Box */
+/* CSS 10 â€“ Detail-Box */
 .details {
 background-color: #9c8989;
 border-radius: 1em;
@@ -462,7 +462,7 @@ color: #ffffff;
 color: white
 }
 
-/* CSS 11 – Banner und Beschreibung */
+/* CSS 11 â€“ Banner und Beschreibung */
 .banner {
 
 }
@@ -473,7 +473,7 @@ font-size: 15px;
 }
 
 
-/* CSS 12 – Letztes Spiel */
+/* CSS 12 â€“ Letztes Spiel */
 .spiel {
 
 }
@@ -482,7 +482,7 @@ font-size: 15px;
 
 }
 
-/* CSS 13 – Link-Buttons */
+/* CSS 13 â€“ Link-Buttons */
 .link-button {
 
 }
@@ -491,7 +491,6 @@ font-size: 15px;
 
 }
 
-<<<<<<< HEAD
 .link-leiste a {
    color: white; 
 }
@@ -499,50 +498,3 @@ font-size: 15px;
 .esttaetischeBox {
     padding: 10px;
 }
-=======
-
-/* =====================================================
-   TEIL D – ⭐⭐ TEIL 4: DEIN CSS
-   ===================================================== */
-
-/* CSS 14 – ⚔️-Knopf und Karte im Vergleich */
-.vergleich-button {
-
-}
-
-.karte.im-vergleich {
-
-}
-
-/* CSS 15 – Hinweis-Box */
-.vergleich-hinweis {
-
-}
-
-/* CSS 16 – Vergleichs-Box und Überschrift */
-.vergleich {
-
-}
-
-.vergleich h2 {
-
-}
-
-/* CSS 17 – "VS" und die Zeilen */
-.vs {
-
-}
-
-.vergleich-zeile {
-
-}
-
-/* CSS 18 – Gewinner und Ergebnis */
-.gewinner {
-
-}
-
-.ergebnis {
-
-}
->>>>>>> origin/main

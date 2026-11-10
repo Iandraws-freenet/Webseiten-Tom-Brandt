@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fußball-App</title>
+    <title>FuÃŸball-App</title>
     <link rel="stylesheet" href="style.css">
 
-    <!-- React und Babel aus dem Internet laden (nicht verändern) -->
+    <!-- React und Babel aus dem Internet laden (nicht verÃ¤ndern) -->
     <script src="https://cdn.jsdelivr.net/npm/react@18.3.1/umd/react.development.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/react-dom@18.3.1/umd/react-dom.development.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@babel/standalone@7.26.4/babel.min.js"></script>
@@ -33,39 +33,31 @@
                 if (gespeichert) return Promise.resolve(JSON.parse(gespeichert));
             } catch (e) { /* ohne Zwischenspeicher weiterarbeiten */ }
             return fetch(adresse)
-<<<<<<< HEAD
                 .then((antwort) => {
                     if (!antwort.ok) throw new Error("HTTP " + antwort.status);
                     return antwort.json();
                 })
-=======
-                .then((antwort) => antwort.json())
->>>>>>> origin/main
                 .then((daten) => {
                     try { sessionStorage.setItem(adresse, JSON.stringify(daten)); } catch (e) { }
                     return daten;
                 });
         }
 
-<<<<<<< HEAD
-=======
-
->>>>>>> origin/main
         const LIGEN = [
             { name: "Bundesliga", code: "German_Bundesliga", id: 4331 },
             { name: "Premier League", code: "English_Premier_League", id: 4328 },
             { name: "La Liga", code: "Spanish_La_Liga", id: 4335 }
         ];
 
-        // ⭐⭐ TEIL 4 (fertig): die aktuelle Saison, z. B. "2026-2027" (eine Saison startet im Sommer)
+        // â­â­ TEIL 4 (fertig): die aktuelle Saison, z. B. "2026-2027" (eine Saison startet im Sommer)
         const heute = new Date();
         const startJahr = heute.getMonth() >= 6 ? heute.getFullYear() : heute.getFullYear() - 1;
         const SAISON = startJahr + "-" + (startJahr + 1);
 
-        // ⭐⭐ TEIL 4 (fertig): Form-Buchstaben als Emojis (W = Sieg, D = Unentschieden, L = Niederlage)
-        const FORM_EMOJI = { W: "✅", D: "➖", L: "❌" };
+        // â­â­ TEIL 4 (fertig): Form-Buchstaben als Emojis (W = Sieg, D = Unentschieden, L = Niederlage)
+        const FORM_EMOJI = { W: "âœ…", D: "âž–", L: "âŒ" };
 
-        // ⭐⭐ TEIL 4 (fertig): Positionen auf Deutsch
+        // â­â­ TEIL 4 (fertig): Positionen auf Deutsch
         const POSITION_DEUTSCH = {
             "Goalkeeper": "Torwart",
             "Centre-Back": "Innenverteidiger",
@@ -76,10 +68,10 @@
             "Central Midfield": "Zentrales Mittelfeld",
             "Attacking Midfield": "Offensives Mittelfeld",
             "Midfielder": "Mittelfeld",
-            "Left Wing": "Linksaußen",
-            "Right Wing": "Rechtsaußen",
-            "Centre-Forward": "Mittelstürmer",
-            "Forward": "Stürmer"
+            "Left Wing": "LinksauÃŸen",
+            "Right Wing": "RechtsauÃŸen",
+            "Centre-Forward": "MittelstÃ¼rmer",
+            "Forward": "StÃ¼rmer"
         };
 
         // Trainer, Manager usw. sind keine Spieler
@@ -87,13 +79,13 @@
 
 
         // =====================================================
-        // Eine Karte für EIN Team
+        // Eine Karte fÃ¼r EIN Team
         // =====================================================
         function TeamKarte({ team, onKlick }) {
             return (
                 <div className="karte" onClick={onKlick}>
 
-                    {/* ✅ HTML 2: Wappen (img) und Name (h2) */}
+                    {/* âœ… HTML 2: Wappen (img) und Name (h2) */}
                     <img src={team.strBadge} alt={team.strTeam} />
                     <h2>{team.strTeam}</h2>
                 </div>
@@ -102,21 +94,21 @@
 
 
         // =====================================================
-        // ⭐⭐ TEIL 4: Eine kleine Karte für EINEN Spieler
+        // â­â­ TEIL 4: Eine kleine Karte fÃ¼r EINEN Spieler
         // =====================================================
         function SpielerKarte({ spieler }) {
 
-            // Fertig: Foto, Position, Rückennummer und Alter
+            // Fertig: Foto, Position, RÃ¼ckennummer und Alter
             const foto = spieler.strCutout || spieler.strThumb;
             const position = POSITION_DEUTSCH[spieler.strPosition] || spieler.strPosition;
-            const nummer = spieler.strNumber || "–";
+            const nummer = spieler.strNumber || "â€“";
             const alter = spieler.dateBorn
                 ? Math.floor((Date.now() - new Date(spieler.dateBorn)) / (365.25 * 24 * 60 * 60 * 1000))
                 : "?";
 
             return (
                 <div className="spieler-karte">
-                    {/* ✏️ DEIN HTML 15: Foto (img) mit src={foto}, Rückennummer (span className="nummer"),
+                    {/* âœï¸ DEIN HTML 15: Foto (img) mit src={foto}, RÃ¼ckennummer (span className="nummer"),
                                         Name (h4) und ein p mit Position und Alter */}
 
                 </div>
@@ -134,78 +126,64 @@
             const beschreibung = text.slice(0, 300) + " ...";
             const webseite = "https://" + team.strWebsite;
 
-            // ⭐ ERWEITERUNG (fertig): mehr Infos und Links
+            // â­ ERWEITERUNG (fertig): mehr Infos und Links
             const spitznamen = team.strTeamAlternate || "keine";
             const wettbewerbe = [team.strLeague, team.strLeague2, team.strLeague3, team.strLeague4].filter(Boolean);
             const farben = [team.strColour1, team.strColour2, team.strColour3].filter(Boolean);
             const wikipedia = "https://de.wikipedia.org/wiki/Spezial:Suche?search=" + encodeURIComponent(team.strTeam);
             const links = [
-                { name: "📸 Instagram", adresse: team.strInstagram },
-                { name: "👍 Facebook", adresse: team.strFacebook },
-                { name: "🐦 X / Twitter", adresse: team.strTwitter },
-                { name: "▶️ YouTube", adresse: team.strYoutube }
+                { name: "ðŸ“¸ Instagram", adresse: team.strInstagram },
+                { name: "ðŸ‘ Facebook", adresse: team.strFacebook },
+                { name: "ðŸ¦ X / Twitter", adresse: team.strTwitter },
+                { name: "â–¶ï¸ YouTube", adresse: team.strYoutube }
             ]
                 .filter((link) => link.adresse)
                 .map((link) => ({ ...link, adresse: "https://" + link.adresse }));
 
-            // ⭐ ERWEITERUNG (fertig): das letzte Spiel vom Team laden
+            // â­ ERWEITERUNG (fertig): das letzte Spiel vom Team laden
             const [spiel, setSpiel] = useState(null);
             useEffect(() => {
                 setSpiel(null);
                 holeDaten("https://www.thesportsdb.com/api/v1/json/123/eventslast.php?id=" + team.idTeam)
-<<<<<<< HEAD
                     .then((daten) => setSpiel(daten.results ? daten.results[0] : null));
-=======
-                    .then((daten) => setSpiel(daten.results ? daten.results[0] : null))
-                    .catch(() => setSpiel(null));
-            }, [team.idTeam]);
-
-            // ⭐⭐ TEIL 4 (fertig): ein paar Spieler vom Team laden
-            const [kader, setKader] = useState([]);
-            useEffect(() => {
-                setKader([]);
-                holeDaten("https://www.thesportsdb.com/api/v1/json/123/lookup_all_players.php?id=" + team.idTeam)
-                    .then((daten) => setKader((daten.player || []).filter((s) => s.strPosition && !KEIN_SPIELER.test(s.strPosition))))
-                    .catch(() => setKader([]));
->>>>>>> origin/main
             }, [team.idTeam]);
 
             return (
                 <div className="details">
-                    <button className="schliessen" onClick={onSchliessen}>✕</button>
+                    <button className="schliessen" onClick={onSchliessen}>âœ•</button>
 
-                    {/* ✅ HTML 3: Name (h2), Gegründet, Stadion, Ort, Beschreibung, Link zur Webseite */}
+                    {/* âœ… HTML 3: Name (h2), GegrÃ¼ndet, Stadion, Ort, Beschreibung, Link zur Webseite */}
                     <h2>{team.strTeam}</h2>
-                    <p><strong>Gegründet:</strong> {team.intFormedYear}</p>
+                    <p><strong>GegrÃ¼ndet:</strong> {team.intFormedYear}</p>
                     <p><strong>Stadion:</strong> {team.strStadium}</p>
                     <p><strong>Ort:</strong> {team.strLocation}</p>
                     <p>{beschreibung}</p>
                     <a href={webseite} target="_blank">Zur Webseite</a>
 
-                    {/* ===================== ⭐ ERWEITERUNG ===================== */}
+                    {/* ===================== â­ ERWEITERUNG ===================== */}
                     <div className="mehr-infos">
 
                         {team.strBanner && (
                             <>
-                                {/* ✏️ DEIN HTML 5: Banner-Bild (img className="banner") mit src={team.strBanner} */}
+                                {/* âœï¸ DEIN HTML 5: Banner-Bild (img className="banner") mit src={team.strBanner} */}
 
                             </>
                         )}
 
                         <div className="steckbrief">
-                            {/* ✏️ DEIN HTML 6: Überschrift (h3) "📋 Steckbrief", ein p mit den Spitznamen
+                            {/* âœï¸ DEIN HTML 6: Ãœberschrift (h3) "ðŸ“‹ Steckbrief", ein p mit den Spitznamen
                                                und ein p "Wettbewerbe:" */}
 
 
                             <ul className="wettbewerbe">
                                 {wettbewerbe.map((wettbewerb) => (
                                     <li key={wettbewerb}>
-                                        {/* ✏️ DEIN HTML 6: der Name vom Wettbewerb */}
+                                        {/* âœï¸ DEIN HTML 6: der Name vom Wettbewerb */}
                                     </li>
                                 ))}
                             </ul>
 
-                            {/* ✏️ DEIN HTML 7: ein p "Vereinsfarben:" (die Farb-Punkte sind schon da) */}
+                            {/* âœï¸ DEIN HTML 7: ein p "Vereinsfarben:" (die Farb-Punkte sind schon da) */}
 
                             <div className="farben">
                                 {farben.map((farbe) => (
@@ -216,18 +194,18 @@
 
                         {team.strEquipment && (
                             <div className="trikot-box">
-                                {/* ✏️ DEIN HTML 8: Überschrift (h3) "👕 Trikot" und das Bild (img className="trikot") */}
+                                {/* âœï¸ DEIN HTML 8: Ãœberschrift (h3) "ðŸ‘• Trikot" und das Bild (img className="trikot") */}
 
                             </div>
                         )}
 
                         {spiel && (
                             <div className="spiel">
-                                {/* ✏️ DEIN HTML 9a: Überschrift (h3) "⚽ Letztes Spiel" und ein p mit dem Datum */}
+                                {/* âœï¸ DEIN HTML 9a: Ãœberschrift (h3) "âš½ Letztes Spiel" und ein p mit dem Datum */}
 
 
                                 <div className="spielstand">
-                                    {/* ✏️ DEIN HTML 9b: Heim-Wappen (img), Heim-Team (p),
+                                    {/* âœï¸ DEIN HTML 9b: Heim-Wappen (img), Heim-Team (p),
                                                         Ergebnis (span className="tore"), Gast-Team (p), Gast-Wappen (img) */}
 
 
@@ -238,19 +216,19 @@
                         <div className="link-leiste">
                             {links.map((link) => (
                                 <a key={link.name} className="link-button" href={link.adresse} target="_blank">
-                                    {/* ✏️ DEIN HTML 10: der Name vom Link */}
+                                    {/* âœï¸ DEIN HTML 10: der Name vom Link */}
                                 </a>
                             ))}
 
-                            {/* ✏️ DEIN HTML 10: noch ein Link (a className="link-button") zu Wikipedia */}
+                            {/* âœï¸ DEIN HTML 10: noch ein Link (a className="link-button") zu Wikipedia */}
 
                         </div>
                     </div>
 
-                    {/* ===================== ⭐⭐ TEIL 4 ===================== */}
+                    {/* ===================== â­â­ TEIL 4 ===================== */}
                     {kader.length > 0 && (
                         <div className="kader">
-                            {/* ✏️ DEIN HTML 14: Überschrift (h3) "👥 Spieler" */}
+                            {/* âœï¸ DEIN HTML 14: Ãœberschrift (h3) "ðŸ‘¥ Spieler" */}
 
 
                             <div className="spieler-liste">
@@ -278,19 +256,13 @@
                 setLaedt(true);
                 setAusgewaehlt(null);
                 holeDaten("https://www.thesportsdb.com/api/v1/json/123/search_all_teams.php?l=" + liga)
-<<<<<<< HEAD
                     .then((daten) => {
                         setTeams(daten.teams || []);
                         setLaedt(false);
                     });
-=======
-                    .then((daten) => setTeams(daten.teams || []))
-                    .catch(() => setTeams([]))
-                    .finally(() => setLaedt(false));
->>>>>>> origin/main
             }, [liga]);
 
-            // ⭐⭐ TEIL 4 (fertig): die Tabelle der Liga laden (der kostenlose Zugang liefert die Top 5)
+            // â­â­ TEIL 4 (fertig): die Tabelle der Liga laden (der kostenlose Zugang liefert die Top 5)
             const [tabelle, setTabelle] = useState([]);
             useEffect(() => {
                 setTabelle([]);
@@ -300,7 +272,7 @@
                     .catch(() => setTabelle([]));
             }, [liga]);
 
-            // ⭐⭐ TEIL 4 (fertig): Klick auf eine Zeile in der Tabelle öffnet das Team
+            // â­â­ TEIL 4 (fertig): Klick auf eine Zeile in der Tabelle Ã¶ffnet das Team
             function zeileAnklicken(zeile) {
                 const team = teams.find((t) => t.idTeam === zeile.idTeam);
                 if (team) setAusgewaehlt(team);
@@ -310,8 +282,8 @@
                 <div className="seite">
 
                     <header>
-                        {/* ✅ HTML 1: Überschrift (h1) und Untertitel (p className="untertitel") */}
-                        <h1>⚽ Fußball-App</h1>
+                        {/* âœ… HTML 1: Ãœberschrift (h1) und Untertitel (p className="untertitel") */}
+                        <h1>âš½ FuÃŸball-App</h1>
                         <p className="untertitel">Die besten Teams aus Europa</p>
                     </header>
 
@@ -327,30 +299,30 @@
                         ))}
                     </nav>
 
-                    {/* ===================== ⭐⭐ TEIL 4: Tabelle ===================== */}
+                    {/* ===================== â­â­ TEIL 4: Tabelle ===================== */}
                     {tabelle.length > 0 && (
                         <section className="tabelle-box">
-                            {/* ✏️ DEIN HTML 11: Überschrift (h2) "🏆 Tabelle" und ein p (className="saison")
-                                                mit "Saison {SAISON} · Top 5" */}
+                            {/* âœï¸ DEIN HTML 11: Ãœberschrift (h2) "ðŸ† Tabelle" und ein p (className="saison")
+                                                mit "Saison {SAISON} Â· Top 5" */}
 
 
                             <table className="tabelle">
                                 <thead>
                                     <tr>
-                                        {/* ✏️ DEIN HTML 12: sechs Spalten-Überschriften (th):
+                                        {/* âœï¸ DEIN HTML 12: sechs Spalten-Ãœberschriften (th):
                                                             Platz, Team, Spiele, Tordiff., Punkte, Form */}
 
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {tabelle.map((zeile) => {
-                                        // Fertig: die Form als Emojis, z. B. "✅ ✅ ➖ ✅ ❌"
+                                        // Fertig: die Form als Emojis, z. B. "âœ… âœ… âž– âœ… âŒ"
                                         const form = (zeile.strForm || "").split("").map((b) => FORM_EMOJI[b] || "").join(" ");
                                         const markiert = ausgewaehlt && ausgewaehlt.idTeam === zeile.idTeam;
 
                                         return (
                                             <tr key={zeile.idTeam} className={markiert ? "markiert" : ""} onClick={() => zeileAnklicken(zeile)}>
-                                                {/* ✏️ DEIN HTML 13: sechs Zellen (td):
+                                                {/* âœï¸ DEIN HTML 13: sechs Zellen (td):
                                                                     {zeile.intRank}
                                                                     Wappen und Name: <td className="team-zelle"><img src={zeile.strBadge} alt="" /> {zeile.strTeam}</td>
                                                                     {zeile.intPlayed}
@@ -367,7 +339,7 @@
                     )}
 
                     {laedt ? (
-                        <p className="laden">Lädt ... ⚽</p>
+                        <p className="laden">LÃ¤dt ... âš½</p>
                     ) : (
                         <div className="karten">
                             {teams.map((team) => (
@@ -381,7 +353,7 @@
                     )}
 
                     <footer>
-                        {/* ✅ HTML 4: "Gemacht von DEIN NAME" */}
+                        {/* âœ… HTML 4: "Gemacht von DEIN NAME" */}
                         <p>Gemacht von Leon, Denijel und Tom</p>
                     </footer>
 

@@ -88,7 +88,10 @@
                     {/* ✏️ DEIN HTML 3: Logo (img) mit src={logo}, Name (h3) mit {team.name},
                                        Platz (p className="platz") mit {medaille} {platz}
                                        und Preisgeld (p className="preisgeld") mit {preisgeld} */}
-
+                    <img src={logo} alt={team.name} />
+                    <h3>{team.name}</h3>
+                    <p className="platz">{medaille} {platz}</p>
+                    <p className="preisgeld">{preisgeld}</p>
                 </div>
             );
         }
@@ -126,7 +129,11 @@
                         {/* ✏️ DEIN HTML 6: Logo (img className="team-logo") mit src={logo}, Name (h2),
                                            Kürzel (p className="kuerzel") mit {kuerzel}
                                            und ein p mit {medaille} {platz} · {preisgeld} */}
-
+                        <img className="team-logo" src={logo} alt={team.name} />
+                        <h2>{team.name}</h2>
+                        <p className="kuerzel">{kuerzel}</p>
+                        <p className="platz">{medaille} {platz}</p>
+                        <p className="preisgeld">{preisgeld}</p>
 
                         <div className="spieler-liste">
                             {spielerListe.map((spieler) => (
@@ -134,14 +141,15 @@
                                     {spieler.foto ? (
                                         <>
                                             {/* ✏️ DEIN HTML 7: Foto (img) mit src={spieler.foto} */}
-
+                                            <img src={spieler.foto} alt={spieler.name}/>
                                         </>
                                     ) : (
                                         <span className="kein-foto">🎮</span>
                                     )}
                                     {/* ✏️ DEIN HTML 7: Spielername (h4) mit {spieler.name}
                                                        und ein p mit {spieler.flagge} {spieler.echterName} */}
-
+                                        <h4>{spieler.name}</h4>
+                                        <p>{spieler.flagge} {spieler.echterName}</p>
                                 </div>
                             ))}
                         </div>
@@ -152,7 +160,8 @@
                                     {/* ✏️ DEIN HTML 8: Runde (span className="runde") mit {m.runde},
                                                        Ergebnis (strong) mit {m.ergebnis}
                                                        und ein span mit "gegen {m.gegner}" */}
-
+                                    <span className="runde">{m.runde}</span>
+                                    <strong>{m.ergebnis}</strong>   
                                 </div>
                             ))}
                         </div>
@@ -160,7 +169,7 @@
                         <div className="link-leiste">
                             {/* ✏️ DEIN HTML 9: ein Link (a className="link-button" target="_blank")
                                                "📊 Team auf vlr.gg" mit {vlrLink} */}
-
+                            <a className="link-button" href={vlrLink} target="_blank">📊 Team auf vlr.gg</a>
                         </div>
                     </div>
                 </div>
@@ -180,7 +189,9 @@
                         <div key={t.id} className={t.winner ? "match-team gewinner" : "match-team"}>
                             {/* ✏️ DEIN HTML 12: Logo (img) mit src={t.logo}, Name (span) mit {t.name}
                                                 und die Punkte (strong) mit {t.score} */}
-
+                            <img src={t.logo} alt={t.name} />
+                            <span>{t.name}</span>
+                            <strong>{t.score}</strong>
                         </div>
                     ))}
                 </div>
@@ -258,19 +269,23 @@
 
                     <header>
                         {/* ✏️ DEIN HTML 1: Überschrift (h1) und Untertitel (p className="untertitel") */}
-
+                        <h1>🏆 {event.name}</h1> <p className="untertitel">Die Valorant-Weltmeisterschaft</p>
                     </header>
 
                     <section className="event-box">
                         {/* ✏️ DEIN HTML 2: Turnier-Logo (img className="event-logo") mit src={event.img}
                                            und drei p: 📍 {event.location}, 📅 {event.dates} und 💰 {event.prizepool} */}
-
+                        <img className="event-logo" src={event.img} alt={event.name} />
+                        <p>📍 {event.location}</p>
+                        <p>📅 {event.dates}</p>
+                        <p>💰 {event.prizepool}</p>
                     </section>
 
                     <section className="weltmeister">
                         {/* ✏️ DEIN HTML 4: Logo (img) mit src={weltmeister.logo}
                                            und eine h2 mit "👑 Weltmeister: {weltmeister.name}" */}
-
+                        <img src={weltmeister.logo} alt={weltmeister.name} />
+                        <h2>👑 Weltmeister: {weltmeister.name}</h2>
                     </section>
 
                     <div className="karten">
@@ -282,12 +297,12 @@
                     {/* ===================== ⭐⭐ TEIL 4: Turnierbaum ===================== */}
                     <section className="turnierbaum">
                         {/* ✏️ DEIN HTML 10: Überschrift (h2) "🏟️ Turnierbaum" */}
-
+                        <h2>🏟️ Turnierbaum</h2>
 
                         <div className="lieblingsteam">
                             <label>
                                 {/* ✏️ DEIN HTML 13: Text "⭐ Mein Lieblingsteam:" */}
-
+                                <span>⭐ Mein Lieblingsteam:</span>
                                 <select value={lieblingsteam} onChange={(e) => setLieblingsteam(e.target.value)}>
                                     <option value="">– keins –</option>
                                     {teams.map((t) => <option key={t.id} value={t.id}>{t.name}</option>)}
@@ -297,7 +312,7 @@
                                 <>
                                     {/* ✏️ DEIN HTML 13: ein p (className="bilanz") mit
                                                         "{lieblingsName}: {siege} Siege, {niederlagen} Niederlagen" */}
-
+                                    <p className="bilanz">{lieblingsName}: {siege} Siege, {niederlagen} Niederlagen</p>
                                 </>
                             )}
                         </div>
@@ -305,12 +320,12 @@
                         {abschnitte.map((abschnitt) => (
                             <div key={abschnitt.titel} className="abschnitt">
                                 {/* ✏️ DEIN HTML 11: Überschrift (h3) mit {abschnitt.titel} */}
-
+                                <h3>{abschnitt.titel}</h3>
                                 <div className="runden">
                                     {abschnitt.runden.map((runde) => (
                                         <div key={runde.round} className="runde-spalte">
                                             {/* ✏️ DEIN HTML 11: Name der Runde (h4) mit {RUNDEN_DEUTSCH[runde.round]} */}
-
+                                            <h4>{RUNDEN_DEUTSCH[runde.round] || runde.round}</h4>
                                             {runde.matches.map((m) => (
                                                 <BracketMatch key={m.id} match={m} lieblingsteam={lieblingsteam} />
                                             ))}
@@ -332,7 +347,8 @@
 
                     <footer>
                         {/* ✏️ DEIN HTML 5: "Daten: vlr.gg" und "Gebaut von DEIN NAME" (je ein p) */}
-
+                        <p>Daten: vrl.gg</p>
+                        <p>Gebaut von Tom</p>
                     </footer>
 
                 </div>
