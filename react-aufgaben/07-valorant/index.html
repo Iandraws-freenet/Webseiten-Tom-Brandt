@@ -78,7 +78,9 @@
                 <div className={klassen} onClick={onKlick}>
 
                     {/* ✏️ DEIN HTML 2: Bild (img) mit src={bild}, Name (h3) und Rolle (p className="rolle") */}
-
+                    <img src={bild} alt={agent.displayName} />
+                    <h3>{agent.displayName}</h3>
+                    <p className="rolle">{rolle}</p>
 
                     {/* ⭐ Erweiterung: Info-Knopf (fertig) */}
                     <button
@@ -106,6 +108,8 @@
                 <div className={"team-agent " + rollenKlasse(agent)} onClick={onKlick}>
 
                     {/* ✏️ DEIN HTML 3: Bild (img) und Name (p) */}
+                    <img src={bild} alt={agent.displayName} />
+                    <p>{agent.displayName}</p>
 
                 </div>
             );
@@ -146,7 +150,10 @@
 
                         {/* ✏️ DEIN HTML 7: großes Bild (img className="portraet") mit src={portraet},
                                            Name (h2), Rolle (p className="rolle") und Beschreibung (p className="beschreibung") */}
-
+                            <img src={portraet} alt={agent.displayName} className="portraet" />
+                            <h2>{agent.displayName}</h2>
+                            <p className="rolle">{rolle}</p>
+                            <p className="beschreibung">{beschreibung}</p>
 
                         <div className="faehigkeiten">
                             {faehigkeiten.map((faehigkeit) => (
@@ -154,13 +161,14 @@
                                     {faehigkeit.displayIcon && (
                                         <>
                                             {/* ✏️ DEIN HTML 8: Icon (img) mit src={faehigkeit.displayIcon} */}
-
+                                            <img src={faehigkeit.displayIcon} alt={faehigkeit.displayName} />
                                         </>
                                     )}
                                     {/* ✏️ DEIN HTML 8: Taste (span className="taste") mit {TASTEN[faehigkeit.slot]},
                                                        Name (h4) mit {faehigkeit.displayName}
                                                        und Beschreibung (p) mit {faehigkeit.description} */}
-
+                                    <span className="taste">{TASTEN[faehigkeit.slot]}</span>
+                                    <h4>{faehigkeit.displayName}</h4>
                                 </div>
                             ))}
                         </div>
@@ -257,7 +265,8 @@
 
                     <header>
                         {/* ✏️ DEIN HTML 1: Überschrift (h1) und Untertitel (p className="untertitel") */}
-
+                        <h1>Valorant Team Builder</h1>
+                        <p className="untertitel">Erstelle dein perfektes Team</p>
                     </header>
 
                     <section className="team-box">
@@ -272,7 +281,7 @@
 
                         <div className="team-info">
                             {/* ✏️ DEIN HTML 4: ein p mit {anzahlImTeam} / 5 Agenten */}
-
+                            <p>{anzahlImTeam} / 5 Agenten</p>
                         </div>
 
                         {/* ⭐⭐ TEIL 4: zwei Knöpfe (das JavaScript ist fertig) */}
@@ -289,7 +298,7 @@
                     {anzahlImTeam === TEAM_GROESSE && (
                         <div className="team-komplett">
                             {/* ✏️ DEIN HTML 5: "🏆 Dein Team ist bereit!" */}
-
+                            <p>🏆 Dein Team ist bereit!</p>
                         </div>
                     )}
 
@@ -378,7 +387,8 @@
 
                     <footer>
                         {/* ✏️ DEIN HTML 6: "Daten und Bilder: valorant-api.com" und "Gebaut von DEIN NAME" (je ein p) */}
-
+                        <p>Daten und Bilder: valorant-api.com</p>
+                        <p>Gebaut von Tom</p>
                     </footer>
 
                 </div>
