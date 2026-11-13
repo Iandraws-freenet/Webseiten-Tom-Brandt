@@ -1,0 +1,690 @@
+/* =====================================================
+   TEIL A – FERTIG: Layout (bitte nicht verändern)
+   ===================================================== */
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    background-attachment: fixed;
+}
+
+.seite {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 30px 16px;
+    text-align: center;
+}
+
+/* Kopf mit Logo */
+.logo {
+    width: 130px;
+    height: 130px;
+    object-fit: contain;
+}
+
+/* Starting Five */
+.five-box {
+    max-width: 720px;
+    margin: 20px auto;
+    box-sizing: border-box;
+}
+
+.five {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+}
+
+.five-spieler,
+.leer-platz {
+    width: 110px;
+    height: 110px;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+.five-spieler {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.15s;
+    animation: huepfen 0.4s ease-out;
+}
+
+.five-spieler:hover {
+    transform: scale(1.08);
+}
+
+.five-spieler img {
+    width: 84px;
+    height: 62px;
+    object-fit: cover;
+    object-position: top;
+}
+
+.five-spieler p {
+    margin: 0;
+    max-width: 96px;
+    font-size: 11px;
+    line-height: 1.1;
+    overflow: hidden;
+}
+
+.five-info p {
+    margin: 12px 0 0;
+}
+
+.five-komplett {
+    max-width: 420px;
+    margin: 15px auto;
+    animation: huepfen 0.5s ease-out;
+}
+
+@keyframes huepfen {
+    0%   { transform: scale(0.5); }
+    60%  { transform: scale(1.15); }
+    100% { transform: scale(1); }
+}
+
+/* Suchfeld */
+.suche {
+    width: 100%;
+    max-width: 400px;
+    margin-top: 20px;
+    box-sizing: border-box;
+    outline: none;
+}
+
+/* Filter-Buttons nebeneinander */
+.filter-leiste {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin: 15px 0;
+}
+
+.filter-button {
+    min-height: 44px;
+    padding: 8px 16px;
+    cursor: pointer;
+    transition: transform 0.15s;
+}
+
+.filter-button:hover {
+    transform: translateY(-2px);
+}
+
+/* Karten im Raster */
+.karten {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.karte {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 60px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.2s, opacity 0.2s;
+}
+
+.karte:hover {
+    transform: translateY(-6px);
+    background-color: #000000;
+}
+
+.karte img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 600 / 436;
+    object-fit: contain;
+}
+
+.karte h3 {
+    margin: 8px 4px;
+}
+
+.nummer {
+    position: absolute;
+    top: 8px;
+    left: 10px;
+}
+
+.position {
+    display: inline-block;
+}
+
+.karte .position {
+    margin-bottom: 12px;
+}
+
+.laden {
+    margin: 30px 0;
+}
+
+/* ---------- ⭐ Erweiterung: Info-Knopf und Detail-Box ---------- */
+.info-button {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 50%;
+    background-color: transparent;
+    font-size: 18px;
+    cursor: pointer;
+    transition: transform 0.15s;
+}
+
+.info-button:hover {
+    transform: scale(1.25);
+}
+
+.overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    background-color: rgba(0, 0, 0, 0.75);
+    animation: einblenden 0.2s ease-out;
+}
+
+.details {
+    position: relative;
+    width: 100%;
+    max-width: 480px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-sizing: border-box;
+    text-align: center;
+    line-height: 1.5;
+    animation: reinfliegen 0.3s ease-out;
+}
+
+@keyframes einblenden {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+@keyframes reinfliegen {
+    from { opacity: 0; transform: translateY(30px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.schliessen {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 1;
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 50%;
+    background-color: #eeeeee;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+.grossfoto {
+    display: block;
+    width: 100%;
+    max-width: 320px;
+    height: auto;
+    margin: 0 auto;
+}
+
+.details h2 {
+    margin: 8px 0;
+}
+
+.masse {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin: 15px 0;
+}
+
+.mass {
+    display: flex;
+    flex-direction: column;
+    padding: 10px 4px;
+}
+
+.infos {
+    text-align: left;
+}
+
+.infos p {
+    margin: 6px 0;
+}
+
+.link-leiste {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin: 15px 0;
+}
+
+.link-button {
+    display: inline-block;
+    padding: 8px 14px;
+    text-decoration: none;
+    transition: transform 0.15s;
+}
+
+.link-button:hover {
+    transform: translateY(-2px);
+}
+
+.five-button {
+    width: 100%;
+    min-height: 48px;
+    cursor: pointer;
+}
+
+.five-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ---------- ⭐⭐ Teil 4: Analyse, Spiele und Quiz ---------- */
+.analyse {
+    max-width: 520px;
+    margin: 20px auto;
+    box-sizing: border-box;
+    animation: reinfliegen 0.3s ease-out;
+}
+
+.analyse h2,
+.analyse p {
+    margin: 6px 0;
+}
+
+.spiele-box {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin: 25px 0;
+    text-align: left;
+}
+
+.spiele-spalte h2 {
+    margin: 0 0 10px;
+    text-align: center;
+}
+
+.spiel {
+    display: grid;
+    grid-template-columns: 118px 32px 1fr auto;
+    align-items: center;
+    gap: 8px;
+    min-height: 24px;
+    margin-bottom: 8px;
+    padding: 8px 10px;
+    box-sizing: border-box;
+}
+
+.spiel img {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+}
+
+.spiel .gegner {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.spiel .datum,
+.spiel strong {
+    white-space: nowrap;
+}
+
+.quiz {
+    max-width: 520px;
+    margin: 25px auto;
+    box-sizing: border-box;
+}
+
+.quiz h2,
+.quiz p {
+    margin: 6px 0;
+}
+
+.quiz-bild {
+    display: block;
+    width: 100%;
+    max-width: 300px;
+    height: auto;
+    aspect-ratio: 600 / 436;
+    object-fit: contain;
+    margin: 10px auto;
+    transition: filter 0.8s;   /* das Foto wird langsam scharf */
+}
+
+.antworten {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.antwort-button {
+    min-height: 48px;
+    padding: 8px;
+    cursor: pointer;
+    transition: transform 0.15s;
+}
+
+.antwort-button:hover {
+    transform: scale(1.03);
+}
+
+.quiz-ergebnis {
+    margin-top: 15px;
+    animation: reinfliegen 0.3s ease-out;
+}
+
+.weiter-button {
+    min-height: 44px;
+    padding: 8px 18px;
+    cursor: pointer;
+}
+
+footer {
+    margin-top: 40px;
+}
+
+/* Handy */
+@media (max-width: 700px) {
+    .spiele-box {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 500px) {
+    .karten {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+
+    .five {
+        gap: 8px;
+    }
+
+    .five-spieler,
+    .leer-platz {
+        width: 88px;
+        height: 88px;
+    }
+
+    .five-spieler img {
+        width: 66px;
+        height: 48px;
+    }
+
+    .spiel {
+        grid-template-columns: 100px 28px 1fr auto;
+        font-size: 14px;
+    }
+}
+
+
+/* =====================================================
+   TEIL B – ✏️ DEIN CSS
+   ===================================================== */
+
+/* CSS 1 – Seite */
+body {
+background: linear-gradient(180deg, #000000, #2b2b2b);
+color: white;
+font-weight: bold;
+}
+
+/* CSS 2 – Überschrift, Bilanz und Tabellenplatz */
+h1 {
+text-transform: uppercase;
+color: silver;
+letter-spacing: 3px;
+}
+
+.bilanz {
+font-weight: bolder;
+color: rgb(145, 145, 145);
+}
+
+.platz {
+color: rgb(145, 145, 145);
+}
+
+/* CSS 3 – Suchfeld und Filter-Buttons */
+.suche {
+border-radius: 30px;
+padding: 8px;
+border-style: none;
+}
+
+.filter-button {
+background-color: black;
+color: silver;
+font-weight: bold;
+}
+
+.filter-button.aktiv {
+background-color: silver;
+color: black;
+}
+
+/* CSS 4 – Starting-Five-Box und die Plätze */
+.five-box {
+background-color: #1a1a1a;
+border-style: solid;
+border-width: 2px;
+border-radius: 10px;
+
+}
+
+.five-spieler {
+border-radius: 50%;
+background-color: silver;
+color: black;
+border-style: solid;
+border-color: white;
+margin-top: 10px;
+}
+
+.leer-platz {
+border: 3px dashed #8a8d8f;
+border-radius: 10px;
+margin-top: 10px;
+}
+
+/* CSS 5 – Karte */
+.karte {
+background-color: #1a1a1a;
+border: 2px solid grey;
+border-radius: 16px;
+box-shadow: 0 6px 14px rgba(255, 255, 255, 0.6);
+}
+
+/* CSS 6 – Rückennummer und Name */
+.nummer {
+font-size: 20px;
+color: silver;
+}
+
+.karte h3 {
+color: silver;
+}
+
+/* CSS 7 – Positions-Schild */
+.position {
+padding: 3px 10px;
+background-color: rgb(88, 88, 88);
+border-radius: 12px;
+font-weight: bold;
+}
+
+/* CSS 8 – Farben für die Positionen */
+.aufbau {
+background-color: #c4ced4;
+color: black;
+}
+
+.fluegel {
+background-color: #ffffff;
+color: black;
+}
+
+.center {
+background-color: #8a8d8f;
+color: black;
+}
+
+/* CSS 9 – Spieler in der Starting Five, "komplett"-Box und Fußzeile */
+.karte.in-five {
+opacity: 0.4;
+}
+
+.five-komplett {
+
+}
+
+footer {
+
+}
+
+
+/* =====================================================
+   TEIL C – ⭐ ERWEITERUNG: DEIN CSS
+   ===================================================== */
+
+/* CSS 10 – Info-Box */
+.details {
+background-color: #1a1a1a;
+border: 3px solid #c4ced4;
+border-radius: 20px;
+box-shadow: 0 0 25px #c4ced4;
+}
+
+.details h2 {
+background-color: silver;
+}
+
+/* CSS 11 – Größe, Gewicht und Alter */
+.mass {
+background-color: #2b2b2b;
+border-radius: 20px;
+}
+
+.mass strong {
+
+}
+
+/* CSS 12 – Infos */
+.infos {
+font-size: 20px;
+}
+
+/* CSS 13 – Link-Buttons und "Starting Five"-Button */
+.link-button {
+background-color: silver;
+color: black;
+border-radius: 10px;
+}
+
+.link-button:hover {
+background-color: black;
+color: silver;
+}
+
+.five-button {
+background-color: white;
+color: black;
+font-weight: bold;
+border-style: none;
+}
+
+
+/* =====================================================
+   TEIL D – ⭐⭐ TEIL 4: DEIN CSS
+   ===================================================== */
+
+/* CSS 14 – Analyse-Box */
+.analyse {
+background-color: #1a1a1a;
+border-style: solid;
+
+}
+
+.schnitt {
+
+}
+
+/* CSS 15 – Spiele: Überschriften und Zeilen */
+.spiele-spalte h2 {
+
+}
+
+.spiel {
+
+}
+
+/* CSS 16 – Sieg, Niederlage und Spiele, die noch kommen */
+.spiel.sieg {
+
+}
+
+.spiel.niederlage {
+
+}
+
+.spiel.kommt {
+
+}
+
+/* CSS 17 – Quiz-Box */
+.quiz {
+
+}
+
+.punkte {
+
+}
+
+/* CSS 18 – Das verschwommene Foto */
+.quiz-bild.versteckt {
+
+}
+
+/* CSS 19 – Antwort-Buttons */
+.antwort-button {
+
+}
+
+.antwort-button.richtig {
+
+}
+
+.antwort-button.falsch {
+
+}
+
+/* CSS 20 – "Nächster Spieler"-Button */
+.weiter-button {
+
+}

@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Go Spurs Go!</title>
+    <link rel="stylesheet" href="style.css">
+
+    <!-- React und Babel aus dem Internet laden (nicht verändern) -->
+    <script src="https://cdn.jsdelivr.net/npm/react@18.3.1/umd/react.development.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/react-dom@18.3.1/umd/react-dom.development.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@babel/standalone@7.26.4/babel.min.js"></script>
+
+    <!-- Gespeicherte Spurs-Daten (erzeugt mit: node daten-aktualisieren.js spurs) -->
+    <script src="daten.js"></script>
+</head>
+<body>
+
+    <div id="root"></div>
+
+    <script type="text/babel">
+
+        const { useState, useEffect } = React;
+
+        const FIVE_GROESSE = 5;
+
+        // Die Daten kommen von ESPN: kostenlos, ohne Key und ohne Limit. Die Spurs haben dort die Nummer 24.
+        const KADER_URL = "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/teams/24/roster";
+        const SPIELE_URL = "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/teams/24/schedule";
+        const SPURS_ID = "24";
+        const SPURS_LOGO = "https://a.espncdn.com/i/teamlogos/nba/500/sa.png";
+        const LOGO_URL = "https://a.espncdn.com/i/teamlogos/nba/500/";
+
+        // Der Zwischenspeicher (localStorage) bleibt auch nach dem Schließen des Browsers, aber nur 24 Stunden gültig.
+        const EIN_TAG = 24 * 60 * 60 * 1000;
+
+        // Daten holen: zuerst aus dem Internet (immer aktuell), sonst aus dem Zwischenspeicher, sonst aus daten.js.
+        // ESPN hat kein Limit. Deshalb fragen wir live. daten.js ist die Sicherung, falls das Internet streikt.
+        function holeDaten(adresse) {
+            try {
+                const gespeichert = JSON.parse(localStorage.getItem(adresse));
+                if (gespeichert && Date.now() - gespeichert.zeit < EIN_TAG) return Promise.resolve(gespeichert.daten);
+            } catch (e) { /* ohne Zwischenspeicher weiterarbeiten */ }
+            // Antwortet der Server nach 8 Sekunden nicht, brechen wir ab und nehmen die Sicherung
+            const abbruch = new AbortController();
+            setTimeout(() => abbruch.abort(), 8000);
+            return fetch(adresse, { signal: abbruch.signal })
+                .then((antwort) => {
+                    if (!antwort.ok) throw new Error("HTTP " + antwort.status);
+                    return antwort.json();
+                })
+                .then((daten) => {
+                    try { localStorage.setItem(adresse, JSON.stringify({ zeit: Date.now(), daten: daten })); } catch (e) { }
+                    return daten;
+                })
+                .catch((fehler) => {
+                    if (window.GESPEICHERTE_DATEN && window.GESPEICHERTE_DATEN[adresse]) {
+                        return window.GESPEICHERTE_DATEN[adresse];
+                    }
+                    throw fehler;
+                });
+        }
+
+        // Fehlt ein Foto oder Logo? Dann zeigen wir das Spurs-Logo.
+        document.addEventListener("error", (e) => {
+            if (e.target.tagName === "IMG" && !e.target.dataset.ersatz) {
+                e.target.dataset.ersatz = "ja";
+                e.target.src = SPURS_LOGO;
+            }
+        }, true);
+
+        // Positionen auf Deutsch, mit CSS-Klasse (ohne Umlaute)
+        const POSITIONEN = {
+            G: { name: "Aufbau", klasse: "aufbau" },
+            F: { name: "Flügel", klasse: "fluegel" },
+            C: { name: "Center", klasse: "center" }
+        };
+
+        const LAENDER = {
+            "USA": "USA", "France": "Frankreich", "Germany": "Deutschland", "Spain": "Spanien", "Canada": "Kanada",
+            "Australia": "Australien", "Dominican Republic": "Dominikanische Republik", "Serbia": "Serbien",
+            "Slovenia": "Slowenien", "Greece": "Griechenland", "Italy": "Italien", "Turkey": "Türkei"
+        };
+
+        // Die Antwort der API in einfache Spieler umwandeln (Zoll → Meter, Pfund → Kilogramm)
+        function spielerUmwandeln(antwort) {
+            return (antwort.athletes || []).map((s) => {
+                const kurz = s.position ? s.position.abbreviation : "";
+                const position = POSITIONEN[kurz] || POSITIONEN[kurz.slice(-1)] || { name: "Spieler", klasse: "spieler" };
+                const groesseCm = Math.round((s.height || 0) * 2.54);
+                const jahre = s.experience ? s.experience.years : 0;
+                const ort = s.birthPlace || {};
+                const land = LAENDER[ort.country] || ort.country;
+                return {
+                    id: s.id,
+                    name: s.displayName,
+                    nummer: "#" + (s.jersey || "?"),
+                    position: position.name,
+                    klasse: position.klasse,
+                    foto: s.headshot ? s.headshot.href : SPURS_LOGO,
+                    groesseCm: groesseCm,
+                    groesse: (groesseCm / 100).toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+                    gewicht: Math.round((s.weight || 0) * 0.4536),
+                    alter: s.age || 0,
+                    college: s.college && s.college.name ? s.college.name : "kein College",
+                    herkunft: [ort.city, land].filter(Boolean).join(", ") || "unbekannt",
+                    erfahrung: jahre === 0 ? "Neuling (Rookie)" : jahre === 1 ? "1 Jahr in der NBA" : jahre + " Jahre in der NBA",
+                    espn: s.links && s.links[0] ? s.links[0].href : "https://www.espn.com/nba/player/_/id/" + s.id
+                };
+            });
+        }
+
+        // Infos über das Team: Bilanz ("9-2" = 9 Siege, 2 Niederlagen), Tabellenplatz, Trainer
+        function teamUmwandeln(kader, spiele) {
+            const t = spiele.team || kader.team || {};
+            const bilanz = t.recordSummary || "0-0";
+            const [siege, niederlagen] = bilanz.split("-");
+            const platz = /^(\d+)\D+ in (.+)$/.exec(t.standingSummary || "");
+            const trainer = kader.coach && kader.coach[0] ? kader.coach[0].firstName + " " + kader.coach[0].lastName : "";
+            return {
+                name: t.displayName || "San Antonio Spurs",
+                logo: t.logo || SPURS_LOGO,
+                bilanz: bilanz,
+                siege: siege,
+                niederlagen: niederlagen,
+                platz: platz ? platz[1] + ". Platz in der " + platz[2] : "",
+                saison: t.seasonSummary || "",
+                trainer: trainer
+            };
+        }
+
+        // Die Spiele der Spurs in einfache Spiele umwandeln
+        function spieleUmwandeln(antwort) {
+            return (antwort.events || []).map((e) => {
+                const partie = e.competitions[0];
+                const spurs = partie.competitors.find((k) => k.id === SPURS_ID);
+                const gegner = partie.competitors.find((k) => k.id !== SPURS_ID);
+                const vorbei = partie.status.type.completed;
+                const zeit = new Date(e.date);
+                const punkteSpurs = spurs.score ? spurs.score.displayValue : "";
+                const punkteGegner = gegner.score ? gegner.score.displayValue : "";
+                let klasse = "kommt";
+                if (vorbei) klasse = spurs.winner ? "sieg" : "niederlage";
+                return {
+                    id: e.id,
+                    vorbei: vorbei,
+                    zeit: zeit.getTime(),
+                    datum: zeit.toLocaleDateString("de-DE", { weekday: "short", day: "2-digit", month: "2-digit" }),
+                    wo: spurs.homeAway === "home" ? "🏠" : "✈️",
+                    gegner: gegner.team.displayName,
+                    gegnerLogo: LOGO_URL + gegner.team.abbreviation.toLowerCase() + ".png",
+                    // Ergebnis aus Sicht der Spurs. Bei Spielen, die noch kommen: die Uhrzeit (deutsche Zeit)
+                    ergebnis: vorbei
+                        ? punkteSpurs + " : " + punkteGegner
+                        : zeit.toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" }) + " Uhr",
+                    kurz: vorbei ? (spurs.winner ? "Sieg" : "Niederlage") : "kommt noch",
+                    klasse: klasse
+                };
+            });
+        }
+
+        function mischen(liste) {
+            const kopie = [...liste];
+            for (let i = kopie.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [kopie[i], kopie[j]] = [kopie[j], kopie[i]];
+            }
+            return kopie;
+        }
+
+
+        // =====================================================
+        // Eine Spieler-Karte im Kader
+        // =====================================================
+        function SpielerKarte({ spieler, inFive, onKlick, onInfo }) {
+            return (
+                <div className={inFive ? "karte in-five" : "karte"} onClick={onKlick}>
+
+                    {/* ✏️ DEIN HTML 2: Rückennummer (span className="nummer") mit {spieler.nummer},
+                                       Foto (img) mit src={spieler.foto} und Name (h3) mit {spieler.name} */}
+                         <span className="nummer">{spieler.nummer}</span>
+                        <img src={spieler.foto} alt={spieler.name} /><h3>{spieler.name}</h3>
+
+                    <span className={"position " + spieler.klasse}>
+                        {/* ✏️ DEIN HTML 2: die Position {spieler.position} */}
+                        position: {spieler.position}
+                        </span>
+
+                    {/* ⭐ Erweiterung: Info-Knopf (fertig) */}
+                    <button
+                        className="info-button"
+                        title="Mehr Infos"
+                        onClick={(e) => {
+                            e.stopPropagation();   // Info-Klick stellt den Spieler NICHT in die Starting Five
+                            onInfo();
+                        }}
+                    >
+                        ℹ️
+                    </button>
+                </div>
+            );
+        }
+
+
+        // =====================================================
+        // Ein Spieler oben in der Starting Five
+        // =====================================================
+        function FiveSpieler({ spieler, onKlick }) {
+            return (
+                <div className="five-spieler" onClick={onKlick}>
+
+                    {/* ✏️ DEIN HTML 3: Foto (img) mit src={spieler.foto} und Name (p) mit {spieler.name} */}
+                    <img src={spieler.foto} alt={spieler.name} />
+                    <p>{spieler.name}</p>
+
+                </div>
+            );
+        }
+
+
+        // =====================================================
+        // ⭐ ERWEITERUNG: Infos zu einem Spieler (Klick auf ℹ️)
+        // =====================================================
+        function SpielerDetails({ spieler, inFive, fiveVoll, onFive, onSchliessen }) {
+
+            // Fertig: Links ins Internet
+            const espn = spieler.espn;
+            const youtube = "https://www.youtube.com/results?search_query=" + encodeURIComponent(spieler.name + " Spurs Highlights");
+            const wikipedia = "https://de.wikipedia.org/wiki/Spezial:Suche?search=" + encodeURIComponent(spieler.name);
+
+            let fiveText = "➕ In die Starting Five";
+            if (inFive) fiveText = "➖ Aus der Starting Five";
+            else if (fiveVoll) fiveText = "Starting Five ist voll";
+
+            return (
+                <div className="overlay" onClick={onSchliessen}>
+                    <div className="details" onClick={(e) => e.stopPropagation()}>
+                        <button className="schliessen" onClick={onSchliessen}>✕</button>
+
+                        {/* ✏️ DEIN HTML 7: großes Foto (img className="grossfoto") mit src={spieler.foto}
+                                           und eine h2 mit {spieler.nummer} {spieler.name} */}
+                            <img className="grossfoto" src={spieler.foto} alt={spieler.name} />
+                            <h2>{spieler.nummer} {spieler.name}</h2>
+
+                        <span className={"position " + spieler.klasse}>
+                            {/* ✏️ DEIN HTML 7: die Position {spieler.position} */}
+                        </span>
+
+                        <div className="masse">
+                            {/* ✏️ DEIN HTML 8: drei Kästchen (div className="mass"), in jedem ein Titel (span) und ein Wert (strong):
+                                               📏 Größe {spieler.groesse} m,  ⚖️ Gewicht {spieler.gewicht} kg  und  🎂 Alter {spieler.alter} */}
+                            <div className="mass">
+                                <span>📏 Größe</span>
+                                <strong>{spieler.groesse} m</strong>
+                            </div>
+                            <div className="mass">
+                                <span>⚖️ Gewicht</span>
+                                <strong>{spieler.gewicht} kg</strong>
+                            </div>
+                            <div className="mass">
+                                <span>🎂 Alter</span>
+                                <strong>{spieler.alter}</strong>
+                            </div>
+                        </div>
+
+                        <div className="infos">
+                            {/* ✏️ DEIN HTML 9: drei p mit strong, z. B. <p><strong>🎓 College:</strong> {spieler.college}</p>
+                                               Dann noch 🌍 Herkunft {spieler.herkunft} und ⏱️ Erfahrung {spieler.erfahrung} */}
+                            <p><strong>🎓 College:</strong> {spieler.college}</p>
+                            <p><strong>🌍 Herkunft:</strong> {spieler.herkunft}</p>
+                            <p><strong>⏱️ Erfahrung:</strong> {spieler.erfahrung}</p>
+                        </div>
+
+                        <div className="link-leiste">
+                            {/* ✏️ DEIN HTML 10: drei Links (a className="link-button" target="_blank"):
+                                                📊 ESPN mit {espn}, ▶️ YouTube mit {youtube} und 📖 Wikipedia mit {wikipedia} */}
+                            <a className="link-button" href={spieler.espn} target="_blank" >
+                                📊 ESPN
+                            </a>
+                            <a className="link-button" href="https://www.youtube.com/watch?v=WQcVhwPShfo" target="_blank">
+                                {console.log(spieler)}
+                                ▶️ YouTube
+                            </a>
+                            <a className="link-button" href="https://de.wikipedia.org/wiki/San_Antonio_Spurs" target="_blank">
+                                📖 Wikipedia
+                            </a>
+                        </div>
+
+                        <button className="five-button" onClick={onFive} disabled={fiveVoll && !inFive}>
+                            {fiveText}
+                        </button>
+                    </div>
+                </div>
+            );
+        }
+
+
+        // =====================================================
+        // ⭐⭐ TEIL 4: Eine Zeile für EIN Spiel der Spurs
+        // =====================================================
+        function SpielZeile({ spiel }) {
+            return (
+                <div className={"spiel " + spiel.klasse}>
+
+                    {/* ✏️ DEIN HTML 12: Datum (span className="datum") mit {spiel.datum} und dahinter {spiel.wo},
+                                        Logo (img) mit src={spiel.gegnerLogo},
+                                        Gegner (span className="gegner") mit {spiel.gegner}
+                                        und das Ergebnis (strong) mit {spiel.ergebnis} */}
+                    <span className="datum">{spiel.datum}</span>
+                    <img src={spiel.gegnerLogo} alt={spiel.gegner} />
+                    <span className="gegner">{spiel.gegner}</span>
+                    <strong>{spiel.ergebnis}</strong>
+                </div>
+            );
+        }
+
+
+        // =====================================================
+        // Die App (JavaScript ist fertig)
+        // =====================================================
+        function App() {
+            const [team, setTeam] = useState(null);
+            const [kader, setKader] = useState([]);
+            const [spiele, setSpiele] = useState([]);
+            const [suche, setSuche] = useState("");
+            const [filter, setFilter] = useState("alle");
+            const [five, setFive] = useState([]);
+            const [fehler, setFehler] = useState(false);
+            const [infoSpieler, setInfoSpieler] = useState(null);   // ⭐ Spieler mit offener Info-Box
+
+            // ⭐⭐ Teil 4: Quiz
+            const [quiz, setQuiz] = useState(null);
+            const [punkte, setPunkte] = useState(0);
+            const [runden, setRunden] = useState(0);
+
+            useEffect(() => {
+                Promise.all([holeDaten(KADER_URL), holeDaten(SPIELE_URL)])
+                    .then(([kaderDaten, spieleDaten]) => {
+                        setTeam(teamUmwandeln(kaderDaten, spieleDaten));
+                        setKader(spielerUmwandeln(kaderDaten));
+                        setSpiele(spieleUmwandeln(spieleDaten));
+                    })
+                    .catch(() => setFehler(true));
+            }, []);
+
+            // Alle Positionen, die es im Kader gibt (für die Filter-Buttons)
+            const allePositionen = [];
+            kader.forEach((s) => {
+                if (!allePositionen.some((p) => p.klasse === s.klasse)) allePositionen.push({ name: s.position, klasse: s.klasse });
+            });
+
+            function spielerUmschalten(s) {
+                if (five.some((f) => f.id === s.id)) {
+                    setFive(five.filter((f) => f.id !== s.id));
+                } else if (five.length < FIVE_GROESSE) {
+                    setFive([...five, s]);
+                }
+            }
+
+            const angezeigteSpieler = kader
+                .filter((s) => filter === "alle" || s.klasse === filter)
+                .filter((s) => s.name.toLowerCase().includes(suche.toLowerCase()) || s.nummer === "#" + suche.trim());
+
+            const anzahlInFive = five.length;
+            const leerePlaetze = FIVE_GROESSE - anzahlInFive;
+
+            // ⭐⭐ TEIL 4 (fertig): die letzten 5 Spiele (neuestes zuerst) und die nächsten 5 Spiele
+            const letzteSpiele = spiele.filter((s) => s.vorbei).sort((a, b) => b.zeit - a.zeit).slice(0, 5);
+            const naechsteSpiele = spiele.filter((s) => !s.vorbei).sort((a, b) => a.zeit - b.zeit).slice(0, 5);
+
+            // ⭐⭐ TEIL 4 (fertig): Analyse der Starting Five
+            const summeGroesse = five.reduce((summe, s) => summe + s.groesseCm, 0);
+            const summeAlter = five.reduce((summe, s) => summe + s.alter, 0);
+            const durchschnittGroesse = anzahlInFive === 0 ? "0" :
+                (summeGroesse / anzahlInFive / 100).toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            const durchschnittAlter = anzahlInFive === 0 ? "0" :
+                (summeAlter / anzahlInFive).toLocaleString("de-DE", { maximumFractionDigits: 1 });
+            const groesster = five.reduce((bester, s) => (bester === null || s.groesseCm > bester.groesseCm ? s : bester), null);
+            const juengster = five.reduce((bester, s) => (bester === null || s.alter < bester.alter ? s : bester), null);
+
+            // ⭐⭐ TEIL 4 (fertig): Quiz "Wer ist dieser Spieler?"
+            function neueQuizRunde() {
+                const auswahl = mischen(kader).slice(0, 4);
+                setQuiz({ gesucht: auswahl[0], antworten: mischen(auswahl), gewaehlt: null });
+            }
+
+            useEffect(() => {
+                if (kader.length >= 4 && quiz === null) neueQuizRunde();
+            }, [kader]);
+
+            function quizAntworten(s) {
+                if (quiz.gewaehlt) return;   // nur eine Antwort pro Runde
+                setQuiz({ ...quiz, gewaehlt: s });
+                setRunden(runden + 1);
+                if (s.id === quiz.gesucht.id) setPunkte(punkte + 1);
+            }
+
+            function antwortKlasse(s) {
+                if (!quiz.gewaehlt) return "antwort-button";
+                if (s.id === quiz.gesucht.id) return "antwort-button richtig";
+                if (s.id === quiz.gewaehlt.id) return "antwort-button falsch";
+                return "antwort-button";
+            }
+
+            let ergebnisText = "";
+            if (quiz && quiz.gewaehlt) {
+                ergebnisText = quiz.gewaehlt.id === quiz.gesucht.id
+                    ? "🎉 Richtig! Das ist " + quiz.gesucht.name + "!"
+                    : "😅 Leider falsch! Das ist " + quiz.gesucht.name + ".";
+            }
+
+            return (
+                <div className="seite">
+
+                    {team && (
+                        <header>
+                            {/* ✏️ DEIN HTML 1: Logo (img className="logo") mit src={team.logo},
+                                               Überschrift (h1), z. B. "Go Spurs Go!",
+                                               die Bilanz (p className="bilanz") mit {team.siege} Siege · {team.niederlagen} Niederlagen
+                                               und der Tabellenplatz (p className="platz") mit {team.platz} */}
+                            <img src={team.logo} alt={team.name} />
+                            <h1>{team.name}</h1>
+                            <p className="bilanz">{team.siege} Siege · {team.niederlagen} Niederlagen</p>
+                            <p className="platz">Tabellenplatz: {team.platz}</p>
+                        </header>
+                    )}
+
+                    <section className="five-box">
+                        <div className="five">
+                            {five.map((s) => (
+                                <FiveSpieler key={s.id} spieler={s} onKlick={() => spielerUmschalten(s)} />
+                            ))}
+                            {Array.from({ length: leerePlaetze }).map((_, i) => (
+                                <div key={"leer" + i} className="leer-platz"></div>
+                            ))}
+                        </div>
+
+                        <div className="five-info">
+                            {/* ✏️ DEIN HTML 4: ein p mit {anzahlInFive} / 5 Spieler */}
+                            <p>{anzahlInFive} / 5 Spieler</p>
+                        </div>
+                    </section>
+
+                    {anzahlInFive === FIVE_GROESSE && (
+                        <div className="five-komplett">
+                            {/* ✏️ DEIN HTML 5: "🔥 Deine Starting Five ist komplett!" */}
+                            <p>🔥 Deine Starting Five ist komplett!</p>
+                        </div>
+                    )}
+
+                    {/* ===================== ⭐⭐ TEIL 4: Analyse der Starting Five ===================== */}
+                    {anzahlInFive > 0 && (
+                        <section className="analyse">
+                            {/* ✏️ DEIN HTML 13: Überschrift (h2) "📊 Analyse der Starting Five",
+                                                ein p (className="schnitt") mit "📏 Größe im Durchschnitt: {durchschnittGroesse} m",
+                                                ein p mit "🎂 Alter im Durchschnitt: {durchschnittAlter} Jahre"
+                                                und ein p mit "🦒 Größter Spieler: {groesster.name} ({groesster.groesse} m)" */}
+                            <h2>📊 Analyse der Starting Five</h2>
+                            <p className="schnitt">📏 Größe im Durchschnitt: {durchschnittGroesse} m</p>
+                            <p>🎂 Alter im Durchschnitt: {durchschnittAlter} Jahre</p>
+                            <p>🦒 Größter Spieler: {groesster.name} {groesster.groesse}</p>
+                        </section>
+                    )}
+
+                    {/* ===================== ⭐⭐ TEIL 4: Spiele der Spurs ===================== */}
+                    {spiele.length > 0 && (
+                        <section className="spiele-box">
+                            <div className="spiele-spalte">
+                                {/* ✏️ DEIN HTML 11: Überschrift (h2) "🏀 Letzte Spiele" */}
+                                <h2>🏀 Letzte Spiele</h2>
+                                {letzteSpiele.map((spiel) => (
+                                    <SpielZeile key={spiel.id} spiel={spiel} />
+                                ))}
+                            </div>
+
+                            <div className="spiele-spalte">
+                                {/* ✏️ DEIN HTML 11: Überschrift (h2) "📅 Nächste Spiele" */}
+                                <h2>📅 Nächste Spiele</h2>
+                                {naechsteSpiele.map((spiel) => (
+                                    <SpielZeile key={spiel.id} spiel={spiel} />
+                                ))}
+                            </div>
+                        </section>
+                    )}
+
+                    {/* ===================== ⭐⭐ TEIL 4: Quiz ===================== */}
+                    {quiz && (
+                        <section className="quiz">
+                            {/* ✏️ DEIN HTML 14: Überschrift (h2) "❓ Wer ist dieser Spieler?"
+                                                und ein p (className="punkte") mit "Punkte: {punkte} / {runden}" */}
+                                <h2>❓ Wer ist dieser Spieler?</h2>
+                                <p className="punkte">Punkte: {punkte} / {runden}</p>
+
+                            <img
+                                className={quiz.gewaehlt ? "quiz-bild" : "quiz-bild versteckt"}
+                                src={quiz.gesucht.foto}
+                                alt="Wer ist das?"
+                            />
+
+                            <div className="antworten">
+                                {quiz.antworten.map((s) => (
+                                    <button key={s.id} className={antwortKlasse(s)} onClick={() => quizAntworten(s)}>
+                                        {/* ✏️ DEIN HTML 15: der Name {s.name} */}
+                                        {s.name}
+                                    </button>
+                                ))}
+                            </div>
+
+                            {quiz.gewaehlt && (
+                                <div className="quiz-ergebnis">
+                                    {/* ✏️ DEIN HTML 16: ein p mit {ergebnisText} */}
+                                    <p>{ergebnisText}</p>
+
+                                    <button className="weiter-button" onClick={neueQuizRunde}>
+                                        {/* ✏️ DEIN HTML 16: Text "➡️ Nächster Spieler" */}
+                                        <p>➡️ Nächster Spieler</p>
+                                    </button>
+                                </div>
+                            )}
+                        </section>
+                    )}
+
+                    <input
+                        className="suche"
+                        placeholder="Spieler suchen (Name oder Nummer) ..."
+                        value={suche}
+                        onChange={(e) => setSuche(e.target.value)}
+                    />
+
+                    <nav className="filter-leiste">
+                        <button
+                            className={filter === "alle" ? "filter-button aktiv" : "filter-button"}
+                            onClick={() => setFilter("alle")}
+                        >
+                            Alle
+                        </button>
+                        {allePositionen.map((p) => (
+                            <button
+                                key={p.klasse}
+                                className={"filter-button " + p.klasse + (filter === p.klasse ? " aktiv" : "")}
+                                onClick={() => setFilter(p.klasse)}
+                            >
+                                {p.name}
+                            </button>
+                        ))}
+                    </nav>
+
+                    {kader.length === 0 && !fehler && <p className="laden">Die Spurs laufen ein ... 🏀</p>}
+                    {fehler && <p className="laden">😢 Die Spieler konnten nicht geladen werden. Lade die Seite neu (F5).</p>}
+                    {kader.length > 0 && angezeigteSpieler.length === 0 && <p className="laden">Kein Spieler gefunden 🔍</p>}
+
+                    <div className="karten">
+                        {angezeigteSpieler.map((s) => (
+                            <SpielerKarte
+                                key={s.id}
+                                spieler={s}
+                                inFive={five.some((f) => f.id === s.id)}
+                                onKlick={() => spielerUmschalten(s)}
+                                onInfo={() => setInfoSpieler(s)}
+                            />
+                        ))}
+                    </div>
+
+                    {infoSpieler && (
+                        <SpielerDetails
+                            spieler={infoSpieler}
+                            inFive={five.some((f) => f.id === infoSpieler.id)}
+                            fiveVoll={anzahlInFive === FIVE_GROESSE}
+                            onFive={() => spielerUmschalten(infoSpieler)}
+                            onSchliessen={() => setInfoSpieler(null)}
+                        />
+                    )}
+
+                    <footer>
+                        {/* ✏️ DEIN HTML 6: "Daten: ESPN" und "Gebaut von DEIN NAME" (je ein p) */}
+                        <p>Daten: ESPN</p>
+                        <p>Gebaut von Tom</p>
+                    </footer>
+
+                </div>
+            );
+        }
+
+        ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+
+    </script>
+</body>
+</html>
