@@ -1,5 +1,5 @@
 /* =====================================================
-   TEIL A â€“ FERTIG: Layout (bitte nicht verÃ¤ndern)
+   TEIL A – FERTIG: Layout (bitte nicht verändern)
    ===================================================== */
 
 body {
@@ -51,7 +51,7 @@ body {
     display: inline-block;
 }
 
-/* Herz-Button: rund und mit HÃ¼pf-Effekt */
+/* Herz-Button: rund und mit Hüpf-Effekt */
 .herz {
     margin-top: auto;
     width: 48px;
@@ -76,12 +76,12 @@ body {
     max-width: 400px;
 }
 
-/* Karte ist anklickbar (â­ Erweiterung) */
+/* Karte ist anklickbar (⭐ Erweiterung) */
 .karte {
     cursor: pointer;
 }
 
-/* ---------- â­ Erweiterung: Detail-Box Ã¼ber der Seite ---------- */
+/* ---------- ⭐ Erweiterung: Detail-Box über der Seite ---------- */
 .overlay {
     position: fixed;
     inset: 0;
@@ -191,7 +191,7 @@ body {
     object-fit: contain;
 }
 
-/* ---------- â­â­ Teil 4: Team-Vergleich ---------- */
+/* ---------- ⭐⭐ Teil 4: Team-Vergleich ---------- */
 .karte {
     position: relative;
 }
@@ -317,15 +317,15 @@ body {
 
 
 /* =====================================================
-   TEIL B â€“ âœï¸ DEIN CSS
+   TEIL B – ✏️ DEIN CSS
    ===================================================== */
 
-/* CSS 1 â€“ Seite */
+/* CSS 1 – Seite */
 body {
 background: linear-gradient(180deg,  #474747, #202020)
 }
 
-/* CSS 2 â€“ Ãœberschrift, Untertitel, ZÃ¤hler */
+/* CSS 2 – Überschrift, Untertitel, Zähler */
 h1 {
 text-transform: uppercase;
 color: rgb(255, 255, 255);;
@@ -341,7 +341,7 @@ text-transform: uppercase;
 color: rgb(243, 230, 230);
 }
 
-/* CSS 3 â€“ Suchfeld */
+/* CSS 3 – Suchfeld */
 .suche {
   width: 100%;
     max-width: 400px;
@@ -352,7 +352,7 @@ color: rgb(243, 230, 230);
     border-color: #ffe4e4;
 }
 
-/* CSS 4 â€“ Sortier-Buttons */
+/* CSS 4 – Sortier-Buttons */
 .sortier-button {
 background-color: rgb(253, 254, 255);    
 
@@ -363,7 +363,7 @@ background-color: silver;
 color: black;
 }
 
-/* CSS 5 â€“ Karte */
+/* CSS 5 – Karte */
 .karte {
    color: white;
    display: flex;
@@ -393,7 +393,7 @@ color: black;
 }
 
 
-/* CSS 6 â€“ Logo und Text in der Karte */
+/* CSS 6 – Logo und Text in der Karte */
 .karte img {
 width: 60%;
 }
@@ -410,7 +410,7 @@ width: 60%;
     color: #8a8d8f;
 }
 
-/* CSS 7 â€“ AbkÃ¼rzung */
+/* CSS 7 – Abkürzung */
 .kurz {
     background-color: #c4ced4;
     color: #000000;
@@ -420,14 +420,14 @@ width: 60%;
     margin-bottom: 6px;
 }
 
-/* CSS 8 â€“ Herz-Button */
+/* CSS 8 – Herz-Button */
 .herz {
     background-color: #2b2b2b;
     font-size: 22px;
     margin-top: 10px;
 }
 
-/* CSS 9 â€“ Nichts gefunden */
+/* CSS 9 – Nichts gefunden */
 .nichts-gefunden {
     background-color: #1a1a1a;
     padding: 25px;
@@ -443,10 +443,10 @@ width: 60%;
 
 
 /* =====================================================
-   TEIL C â€“ â­ ERWEITERUNG: DEIN CSS
+   TEIL C – ⭐ ERWEITERUNG: DEIN CSS
    ===================================================== */
 
-/* CSS 10 â€“ Detail-Box */
+/* CSS 10 – Detail-Box */
 .details {
 background-color: #9c8989;
 border-radius: 1em;
@@ -462,7 +462,7 @@ color: #ffffff;
 color: white
 }
 
-/* CSS 11 â€“ Banner und Beschreibung */
+/* CSS 11 – Banner und Beschreibung */
 .banner {
 
 }
@@ -473,7 +473,7 @@ font-size: 15px;
 }
 
 
-/* CSS 12 â€“ Letztes Spiel */
+/* CSS 12 – Letztes Spiel */
 .spiel {
 
 }
@@ -482,7 +482,7 @@ font-size: 15px;
 
 }
 
-/* CSS 13 â€“ Link-Buttons */
+/* CSS 13 – Link-Buttons */
 .link-button {
 
 }
